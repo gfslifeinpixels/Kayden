@@ -33,7 +33,6 @@
       transition: all 0.2s;
     }
 
-    /* ===== PAGE 1: ENVELOPE with SPIDER/WEB EFFECT ===== */
     .page-envelope {
       background: #fce9d8;
       background-image: radial-gradient(circle at 20% 30%, #ffddbb 5%, transparent 15%),
@@ -139,7 +138,6 @@
       100% { opacity: 0.6; transform: scale(0.96); }
     }
 
-    /* ===== PAGE 2: INVITATION ===== */
     .page-invite {
       background: #fcf3e6;
       padding: 20px 18px 28px;
@@ -453,15 +451,6 @@
       color: #1f1f1f;
     }
 
-    .plus-name-tag {
-      font-size: 0.75rem;
-      color: #555;
-      background: #f0f0f0;
-      padding: 0 10px;
-      border-radius: 20px;
-      margin-left: 6px;
-    }
-
     .download-btn {
       background: #0d3a5c;
       color: white;
@@ -473,12 +462,6 @@
       border: 2px solid #fdd835;
       width: 100%;
       font-size: 0.9rem;
-    }
-
-    .rsvp-count {
-      font-size: 0.8rem;
-      color: #aaa;
-      margin-left: 8px;
     }
 
     @media (max-width: 450px) {
@@ -495,7 +478,6 @@
 
 <div class="invite-card" id="inviteCard">
 
-  <!-- PAGE 1: ENVELOPE with Spider-Web Canvas -->
   <div class="page-envelope" id="envelopePage">
     <canvas id="webCanvas"></canvas>
     <div class="envelope-icon">
@@ -507,7 +489,6 @@
     <div style="margin-top: 12px; font-size: 0.8rem; color:#5a3e2b;"><i class="fas fa-map-pin"></i> Ilocos, PH</div>
   </div>
 
-  <!-- PAGE 2: INVITATION DETAILS + RSVP -->
   <div class="page-invite" id="invitePage">
     <div class="spidey-header">
       <i class="fas fa-spider"></i>
@@ -515,13 +496,11 @@
       <i class="fas fa-mask"></i>
     </div>
 
-    <!-- COUNTDOWN -->
     <div class="countdown-box">
       <div class="countdown-timer" id="countdownDisplay">--d --h --m</div>
       <div class="countdown-label"><i class="fas fa-clock"></i> NOV 15, 2026 · 3PM</div>
     </div>
 
-    <!-- PARTY DETAILS with proper spacing -->
     <div class="party-details">
       <div class="party-detail-row">
         <i class="fas fa-map-pin"></i>
@@ -545,7 +524,6 @@
       </div>
     </div>
 
-    <!-- RSVP FORM -->
     <div class="rsvp-section">
       <div class="rsvp-title">
         <i class="fas fa-pencil-alt"></i> RSVP · web-slinger style
@@ -553,7 +531,6 @@
       <div class="rsvp-form" id="rsvpForm">
         <input type="text" id="guestName" placeholder="Your name (e.g. Miles)" required>
 
-        <!-- Plus One: checkbox + name field -->
         <div class="plus-one-group">
           <input type="checkbox" id="plusOneCheck">
           <label for="plusOneCheck"><i class="fas fa-user-plus"></i> Plus One</label>
@@ -567,7 +544,6 @@
       </div>
     </div>
 
-    <!-- RSVP LIST with password reveal (password = 1234, hidden) -->
     <div class="rsvp-list-area">
       <div class="rsvp-toggle">
         <span style="font-size:0.8rem; opacity:0.8;"><i class="fas fa-user-friends"></i> guest list</span>
@@ -587,6 +563,7 @@
 <script>
   (function() {
     // ---- YOUR GOOGLE SHEETS WEB APP URL ----
+    // REPLACE THIS WITH YOUR DEPLOYED URL AFTER UPDATING THE SCRIPT
     const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyUtq9G05R5QFIU3xuHVX8dUBz71JVBmim7qcJ5r0RPHi3plgOvxyaTW5Yn_vL6XgC6_g/exec';
 
     // ---- Spider-Web Canvas Effect ----
@@ -677,10 +654,10 @@
       invitePage.classList.add('active');
       updateCountdown();
       setInterval(updateCountdown, 1000);
-      loadRsvpFromGoogle(); // Load RSVPs when page opens
+      loadRsvpFromGoogle();
     });
 
-    // ---- Countdown to NOV 15, 2026 3PM (Philippines) ----
+    // ---- Countdown ----
     function updateCountdown() {
       const target = new Date('2026-11-15T15:00:00+08:00');
       const now = new Date();
@@ -693,7 +670,7 @@
     }
     updateCountdown();
 
-    // ---- Plus One checkbox toggle ----
+    // ---- Plus One checkbox ----
     const plusOneCheck = document.getElementById('plusOneCheck');
     const plusOneName = document.getElementById('plusOneName');
 
@@ -706,48 +683,61 @@
       }
     });
 
-    // ---- RSVP data from Google Sheets ----
+    // ---- RSVP data ----
     let rsvpEntries = [];
+    let isLoading = false;
 
     async function loadRsvpFromGoogle() {
+      if (isLoading) return;
+      isLoading = true;
+      
       try {
         const response = await fetch(SHEET_URL);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
         
-        // Convert Google Sheet data to our format
-        rsvpEntries = data.map(row => ({
-          name: row.name || 'Guest',
-          plus: row.plus_one || '0',
-          plusName: row.plus_one_name || ''
-        }));
-        
-        // Keep at least some default entries if empty
-        if (rsvpEntries.length === 0) {
-          rsvpEntries = [
-            { name: 'Kayden Elija', plus: '1', plusName: 'MJ' },
-            { name: 'Miles Morales', plus: '0', plusName: '' },
-            { name: 'Gwen Stacy', plus: '1', plusName: 'Peter' }
-          ];
+        if (data.error) {
+          console.warn('Sheet returned error:', data.error);
+          rsvpEntries = getDefaultEntries();
+        } else if (Array.isArray(data) && data.length > 0) {
+          rsvpEntries = data.map(row => ({
+            name: row.name || 'Guest',
+            plus: row.plus_one || '0',
+            plusName: row.plus_one_name || ''
+          }));
+        } else {
+          rsvpEntries = getDefaultEntries();
         }
         
         renderRsvpList();
       } catch (error) {
-        console.warn('Failed to load from Google Sheets, using defaults:', error);
-        // Default entries if Google Sheets fails
-        rsvpEntries = [
-          { name: 'Kayden Elija', plus: '1', plusName: 'MJ' },
-          { name: 'Miles Morales', plus: '0', plusName: '' },
-          { name: 'Gwen Stacy', plus: '1', plusName: 'Peter' }
-        ];
+        console.error('Failed to load from Google Sheets:', error);
+        rsvpEntries = getDefaultEntries();
         renderRsvpList();
+        // Show a subtle error but don't block the user
+        document.querySelector('.rsvp-section .rsvp-title').innerHTML = 
+          '<i class="fas fa-pencil-alt"></i> RSVP · offline mode';
       }
+      
+      isLoading = false;
+    }
+
+    function getDefaultEntries() {
+      return [
+        { name: 'Kayden Elija', plus: '1', plusName: 'MJ' },
+        { name: 'Miles Morales', plus: '0', plusName: '' },
+        { name: 'Gwen Stacy', plus: '1', plusName: 'Peter' }
+      ];
     }
 
     async function saveRsvpToGoogle(name, plus, plusName) {
       try {
         const response = await fetch(SHEET_URL, {
           method: 'POST',
-          mode: 'no-cors',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -758,8 +748,16 @@
           })
         });
         
-        // Since we're using no-cors, we can't read the response
-        // But the data should be saved
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success === false) {
+          throw new Error(result.error || 'Unknown error');
+        }
+        
         return true;
       } catch (error) {
         console.error('Failed to save to Google Sheets:', error);
@@ -770,24 +768,33 @@
     function renderRsvpList() {
       const ul = document.getElementById('rsvpListUl');
       ul.innerHTML = '';
-      rsvpEntries.forEach((entry, index) => {
-        const li = document.createElement('li');
-        const leftSpan = document.createElement('span');
-        leftSpan.textContent = entry.name || 'Guest';
-        const rightSpan = document.createElement('span');
-        const plusCount = entry.plus ? parseInt(entry.plus) : 0;
-        let badgeText = '+' + (plusCount > 0 ? plusCount : '0');
-        if (plusCount > 0 && entry.plusName) {
-          badgeText += ' (' + entry.plusName + ')';
-        }
-        rightSpan.className = 'badge-plus';
-        rightSpan.textContent = badgeText;
-        li.appendChild(leftSpan);
-        li.appendChild(rightSpan);
-        ul.appendChild(li);
-      });
       
-      // Update total count
+      if (rsvpEntries.length === 0) {
+        const li = document.createElement('li');
+        li.textContent = 'No RSVPs yet. Be the first!';
+        li.style.textAlign = 'center';
+        li.style.color = '#888';
+        li.style.borderLeftColor = '#ccc';
+        ul.appendChild(li);
+      } else {
+        rsvpEntries.forEach((entry) => {
+          const li = document.createElement('li');
+          const leftSpan = document.createElement('span');
+          leftSpan.textContent = entry.name || 'Guest';
+          const rightSpan = document.createElement('span');
+          const plusCount = entry.plus ? parseInt(entry.plus) : 0;
+          let badgeText = '+' + (plusCount > 0 ? plusCount : '0');
+          if (plusCount > 0 && entry.plusName) {
+            badgeText += ' (' + entry.plusName + ')';
+          }
+          rightSpan.className = 'badge-plus';
+          rightSpan.textContent = badgeText;
+          li.appendChild(leftSpan);
+          li.appendChild(rightSpan);
+          ul.appendChild(li);
+        });
+      }
+      
       const total = rsvpEntries.reduce((sum, entry) => {
         return sum + 1 + (parseInt(entry.plus) || 0);
       }, 0);
@@ -815,7 +822,7 @@
         plusVal = '1';
       }
 
-      // Check for duplicate
+      // Check for duplicate in current list
       const duplicate = rsvpEntries.some(entry => 
         entry.name.toLowerCase() === name.toLowerCase()
       );
@@ -824,11 +831,19 @@
         return;
       }
 
+      // Show saving indicator
+      const submitBtn = document.getElementById('rsvpSubmitBtn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+      submitBtn.disabled = true;
+
       // Save to Google Sheets
       const saved = await saveRsvpToGoogle(name, plusVal, plusNameVal);
       
+      submitBtn.innerHTML = originalText;
+      submitBtn.disabled = false;
+      
       if (saved) {
-        // Add to local list
         rsvpEntries.push({ 
           name: name, 
           plus: plusVal, 
@@ -848,7 +863,7 @@
       }
     });
 
-    // ---- Password toggle (password = 1234, no hint) ----
+    // ---- Password toggle ----
     let listVisible = false;
     const toggleIcon = document.getElementById('toggleListIcon');
     const passwordInput = document.getElementById('passwordInput');
@@ -862,7 +877,7 @@
           listContainer.classList.add('open');
           toggleIcon.innerHTML = '<i class="fas fa-lock-open"></i>';
           toggleIcon.style.color = '#fdd835';
-          loadRsvpFromGoogle(); // Refresh list when opening
+          loadRsvpFromGoogle();
         } else {
           listContainer.classList.remove('open');
           toggleIcon.innerHTML = '<i class="fas fa-lock"></i>';
@@ -882,18 +897,22 @@
       content += '=========================\n';
       content += `Generated: ${new Date().toLocaleString()}\n\n`;
       
-      rsvpEntries.forEach((entry, idx) => {
-        const plus = entry.plus ? parseInt(entry.plus) : 0;
-        let line = `${idx+1}. ${entry.name}`;
-        if (plus > 0) {
-          line += `  ( +1`;
-          if (entry.plusName) line += `: ${entry.plusName}`;
-          line += ` )`;
-        } else {
-          line += `  ( +0 )`;
-        }
-        content += line + '\n';
-      });
+      if (rsvpEntries.length === 0) {
+        content += 'No RSVPs yet.\n';
+      } else {
+        rsvpEntries.forEach((entry, idx) => {
+          const plus = entry.plus ? parseInt(entry.plus) : 0;
+          let line = `${idx+1}. ${entry.name}`;
+          if (plus > 0) {
+            line += `  ( +1`;
+            if (entry.plusName) line += `: ${entry.plusName}`;
+            line += ` )`;
+          } else {
+            line += `  ( +0 )`;
+          }
+          content += line + '\n';
+        });
+      }
       
       const total = rsvpEntries.reduce((sum, entry) => {
         return sum + 1 + (parseInt(entry.plus) || 0);
@@ -912,7 +931,7 @@
       URL.revokeObjectURL(url);
     });
 
-    // Enter key support for name field
+    // Enter key support
     document.getElementById('guestName').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -920,7 +939,7 @@
       }
     });
 
-    // Load initial RSVP data
+    // ---- Load initial data ----
     loadRsvpFromGoogle();
 
   })();
