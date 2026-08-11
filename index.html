@@ -669,8 +669,8 @@
       const formUrl = 'https://docs.google.com/forms/d/13rLkObpt1JzQ6fy_pA8y4xzn8ukQLl5pVarn_5npsUY/formResponse';
       const formData = new URLSearchParams();
       formData.append('entry.1789997178', name);
-      formData.append('entry.978997940_sentinel', plusOne);
-      formData.append('entry.1999140148_sentinel', plusOne === 'Yes' ? plusOneName : '');
+      formData.append('entry.978997940', plusOne);
+      formData.append('entry.1999140148', plusOne === 'Yes' ? plusOneName : '');
 
       fetch(formUrl, {
         method: 'POST',
