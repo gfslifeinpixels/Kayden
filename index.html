@@ -645,6 +645,15 @@
       }
     });
 
+    // Hidden iframe prevents Google Forms navigation while submitting.
+    if (!document.getElementById('googleFormSubmitFrame')) {
+      const submitFrame = document.createElement('iframe');
+      submitFrame.name = 'googleFormSubmitFrame';
+      submitFrame.id = 'googleFormSubmitFrame';
+      submitFrame.style.display = 'none';
+      document.body.appendChild(submitFrame);
+    }
+
     document.getElementById('rsvpSubmitBtn').addEventListener('click', function() {
       const name = document.getElementById('guestName').value.trim();
       const plusOne = document.getElementById('plusOne').value;
@@ -667,7 +676,35 @@
 
       // Google Forms submission
       const formUrl = 'https://docs.google.com/forms/d/13rLkObpt1JzQ6fy_pA8y4xzn8ukQLl5pVarn_5npsUY/formResponse';
+      // Hidden Google Form values, in the same order as the questions.
+      const hiddenForm = document.createElement('form');
+      hiddenForm.method = 'POST';
+      hiddenForm.action = 'https://docs.google.com/forms/d/13rLkObpt1JzQ6fy_pA8y4xzn8ukQLl5pVarn_5npsUY/formResponse';
+      hiddenForm.target = 'googleFormSubmitFrame';
+      hiddenForm.style.display = 'none';
+
+      const hiddenName = document.createElement('input');
+      hiddenName.type = 'hidden';
+      hiddenName.name = 'entry.1789997178';
+      hiddenName.value = name;
+      hiddenForm.appendChild(hiddenName);
+
+      const hiddenPlusOne = document.createElement('input');
+      hiddenPlusOne.type = 'hidden';
+      hiddenPlusOne.name = 'entry.978997940';
+      hiddenPlusOne.value = plusOne;
+      hiddenForm.appendChild(hiddenPlusOne);
+
+      const hiddenPlusOneName = document.createElement('input');
+      hiddenPlusOneName.type = 'hidden';
+      hiddenPlusOneName.name = 'entry.1999140148';
+      hiddenPlusOneName.value = plusOne === 'Yes' ? plusOneName : '';
+      hiddenForm.appendChild(hiddenPlusOneName);
+
+      document.body.appendChild(hiddenForm);
+
       const formData = new URLSearchParams();
+      // Google Form fields — kept in the same order as the form questions.
       formData.append('entry.1789997178', name);
       formData.append('entry.978997940', plusOne);
       formData.append('entry.1999140148', plusOne === 'Yes' ? plusOneName : '');
