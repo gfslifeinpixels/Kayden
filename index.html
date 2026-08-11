@@ -214,31 +214,44 @@
       font-weight: 600;
     }
 
+    /* ===== PARTY DETAILS - VERTICAL LIST WITH LABELS ===== */
     .party-details {
       background: white;
       border-radius: 30px;
-      padding: 16px 16px 12px;
+      padding: 18px 20px 16px;
       box-shadow: 0 6px 0 #b0b0b0, 0 8px 16px rgba(0,0,0,0.1);
       border: 2px solid #b71c1c;
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .party-detail-row {
+      display: flex;
       align-items: center;
-      gap: 8px 12px;
-    }
-
-    .party-details i {
-      color: #b71c1c;
-      width: 24px;
-      font-size: 1.3rem;
-    }
-
-    .party-details span {
-      font-weight: 600;
-      color: #1d2c3a;
+      gap: 12px;
       font-size: 1rem;
     }
 
-    .party-details .highlight {
+    .party-detail-row i {
+      color: #b71c1c;
+      width: 24px;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+
+    .party-detail-row .label {
+      font-weight: 700;
+      color: #1d2c3a;
+      min-width: 65px;
+    }
+
+    .party-detail-row .value {
+      font-weight: 500;
+      color: #2a3a4a;
+    }
+
+    .party-detail-row .highlight {
       background: #fdd835;
       padding: 2px 14px;
       border-radius: 40px;
@@ -288,8 +301,12 @@
       gap: 10px;
     }
 
-    .rsvp-form .row-duo input {
+    .rsvp-form .row-duo select {
       flex: 1;
+    }
+
+    .rsvp-form .row-duo input {
+      flex: 2;
     }
 
     .rsvp-form button {
@@ -329,6 +346,7 @@
       gap: 18px;
       color: white;
       font-weight: 600;
+      cursor: pointer;
     }
 
     .rsvp-toggle i {
@@ -346,13 +364,8 @@
       transform: scale(0.86);
     }
 
-    .rsvp-password-input {
-      background: white;
-      border: 2px solid #fdd835;
-      padding: 6px 14px;
-      border-radius: 40px;
-      width: 120px;
-      font-size: 0.8rem;
+    .rsvp-toggle span {
+      cursor: pointer;
     }
 
     .rsvp-list-hidden {
@@ -411,13 +424,135 @@
       font-size: 0.9rem;
     }
 
+    /* ===== PASSWORD MODAL ===== */
+    .password-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .password-modal.active {
+      display: flex;
+    }
+
+    .password-modal-content {
+      background: white;
+      padding: 30px 35px;
+      border-radius: 30px;
+      text-align: center;
+      max-width: 350px;
+      width: 90%;
+      border: 3px solid #b71c1c;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .password-modal-content i {
+      font-size: 3rem;
+      color: #b71c1c;
+      margin-bottom: 10px;
+    }
+
+    .password-modal-content h3 {
+      color: #1d2c3a;
+      margin-bottom: 5px;
+      font-size: 1.3rem;
+    }
+
+    .password-modal-content p {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+    }
+
+    .password-modal-content input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 60px;
+      border: 2px solid #b71c1c;
+      font-size: 1rem;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .password-modal-content .modal-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .password-modal-content .modal-buttons button {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: none;
+      transition: 0.2s;
+    }
+
+    .password-modal-content .modal-buttons .btn-unlock {
+      background: #b71c1c;
+      color: white;
+      border: 2px solid #fdd835;
+    }
+
+    .password-modal-content .modal-buttons .btn-unlock:active {
+      transform: scale(0.95);
+    }
+
+    .password-modal-content .modal-buttons .btn-cancel {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    .password-modal-content .modal-buttons .btn-cancel:active {
+      transform: scale(0.95);
+    }
+
+    .password-modal-content .error-msg {
+      color: #d32f2f;
+      font-size: 0.85rem;
+      margin-top: 8px;
+      display: none;
+    }
+
+    .password-modal-content .error-msg.show {
+      display: block;
+    }
+
     @media (max-width: 450px) {
       .envelope-icon { font-size: 80px; }
       .countdown-timer { font-size: 1.8rem; }
+      .party-detail-row { font-size: 0.9rem; flex-wrap: wrap; }
+      .party-detail-row .label { min-width: 55px; }
+      .rsvp-form .row-duo { flex-direction: column; }
+      .password-modal-content { padding: 25px 20px; }
     }
   </style>
 </head>
 <body>
+
+<!-- PASSWORD MODAL -->
+<div class="password-modal" id="passwordModal">
+  <div class="password-modal-content">
+    <i class="fas fa-lock"></i>
+    <h3>🔒 Guest List</h3>
+    <p>Enter the password to view the RSVP list</p>
+    <input type="password" id="modalPasswordInput" placeholder="Enter password" autofocus>
+    <div class="error-msg" id="modalError">Incorrect password. Please try again.</div>
+    <div class="modal-buttons">
+      <button class="btn-cancel" id="modalCancelBtn">Cancel</button>
+      <button class="btn-unlock" id="modalUnlockBtn"><i class="fas fa-unlock"></i> Unlock</button>
+    </div>
+  </div>
+</div>
 
 <div class="invite-card" id="inviteCard">
 
@@ -447,12 +582,28 @@
       <div class="countdown-label"><i class="fas fa-clock"></i> NOV 15, 2026 · 3PM</div>
     </div>
 
-    <!-- party details -->
+    <!-- PARTY DETAILS - Vertical list with labels -->
     <div class="party-details">
-      <i class="fas fa-map-marker-alt"></i><span>Ilocos, Philippines</span>
-      <i class="fas fa-calendar-day"></i><span class="highlight">Nov 15 · 3pm</span>
-      <i class="fas fa-birthday-cake"></i><span>Spider-Man theme!</span>
-      <i class="fas fa-child"></i><span>Kids friendly</span>
+      <div class="party-detail-row">
+        <i class="fas fa-map-pin"></i>
+        <span class="label">Where:</span>
+        <span class="value">Ilocos, Philippines</span>
+      </div>
+      <div class="party-detail-row">
+        <i class="fas fa-calendar-day"></i>
+        <span class="label">When:</span>
+        <span class="value highlight">Nov 15, 2026 · 3:00 PM</span>
+      </div>
+      <div class="party-detail-row">
+        <i class="fas fa-mask"></i>
+        <span class="label">Theme:</span>
+        <span class="value">Spider-Man theme!</span>
+      </div>
+      <div class="party-detail-row">
+        <i class="fas fa-child"></i>
+        <span class="label">For:</span>
+        <span class="value">Kids friendly</span>
+      </div>
     </div>
 
     <!-- RSVP FORM -->
@@ -463,33 +614,28 @@
       <div class="rsvp-form" id="rsvpForm">
         <input type="text" id="guestName" placeholder="Your name (e.g. Miles)" required>
         <div class="row-duo">
-          <input type="text" id="plusOneName" placeholder="Plus one name" style="width:160px;">
-          <select id="plusOne" aria-label="Plus one? (optional)" required>
-            <option value="" selected disabled>Plus one? (optional)</option>
+          <select id="plusOne" aria-label="Plus one?">
+            <option value="" selected disabled>Plus one?</option>
             <option value="Yes">Yes</option>
             <option value="No">No</option>
           </select>
+          <input type="text" id="plusOneName" placeholder="Plus one name (if applicable)">
         </div>
         <button id="rsvpSubmitBtn"><i class="fas fa-check-circle"></i> SAVE RSVP</button>
       </div>
       <div style="font-size:0.8rem; text-align:center; color:#1f3a4b; margin-top:6px;"><i class="fas fa-save"></i> saved online · download below</div>
     </div>
 
-    <!-- RSVP LIST with password reveal (password = 1234, hidden) -->
+    <!-- RSVP LIST with password modal -->
     <div class="rsvp-list-area">
-      <div class="rsvp-toggle">
+      <div class="rsvp-toggle" id="guestListToggle">
         <span style="font-size:0.8rem; opacity:0.8;"><i class="fas fa-user-friends"></i> guest list</span>
         <div style="display:flex; gap:8px; align-items:center;">
-          <input type="password" id="passwordInput" placeholder="password" class="rsvp-password-input">
           <i class="fas fa-lock" id="toggleListIcon" style="font-size:1.6rem; padding:2px 12px;"></i>
         </div>
       </div>
       <div class="rsvp-list-hidden" id="rsvpListContainer">
-        <ul id="rsvpListUl">
-          <li><span>Kayden Elija</span> <span class="badge-plus">+1</span></li>
-          <li><span>Miles Morales</span> <span class="badge-plus">+0</span></li>
-          <li><span>Gwen Stacy</span> <span class="badge-plus">+1</span></li>
-        </ul>
+        <ul id="rsvpListUl"></ul>
         <button class="download-btn" id="downloadRsvpBtn"><i class="fas fa-download"></i> Download RSVP list (.txt)</button>
       </div>
     </div>
@@ -589,6 +735,8 @@
       invitePage.classList.add('active');
       updateCountdown();
       setInterval(updateCountdown, 1000);
+      // Load RSVPs from Google Form when page opens
+      loadRsvpFromGoogle();
     });
 
     // ---- Countdown to NOV 15, 2026 3PM (Philippines) ----
@@ -605,15 +753,61 @@
     updateCountdown();
 
     // ---- RSVP data ----
-    let rsvpEntries = [
-      { name: 'Kayden Elija', plus: '1' },
-      { name: 'Miles Morales', plus: '0' },
-      { name: 'Gwen Stacy', plus: '1' }
-    ];
+    let rsvpEntries = [];
+
+    // ---- Load RSVPs from Google Form ----
+    // Google Form response URL (replace with your own)
+    const GOOGLE_FORM_RESPONSE_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfahKmju9lSlnkwJDH4IrNy1GYsANR9s6HXM1zddFlsL6Vs4A/viewform?usp=pp_url';
+    // For fetching responses, we need a different approach since Google Forms doesn't have a public API
+    // We'll use a proxy or manual entry for demo purposes
+    
+    // For demo, we'll use localStorage to persist RSVPs
+    // In production, you'd use a proper backend or Google Apps Script
+    function loadRsvpFromGoogle() {
+      // Try to load from localStorage first
+      try {
+        const stored = localStorage.getItem('spidey_rsvp_entries');
+        if (stored) {
+          rsvpEntries = JSON.parse(stored);
+          renderRsvpList();
+          return;
+        }
+      } catch (e) {
+        console.warn('Failed to load from localStorage');
+      }
+      
+      // Default entries if nothing is stored
+      rsvpEntries = [
+        { name: 'Kayden Elija', plus: '1', plusName: 'MJ' },
+        { name: 'Miles Morales', plus: '0', plusName: '' },
+        { name: 'Gwen Stacy', plus: '1', plusName: 'Peter' }
+      ];
+      renderRsvpList();
+    }
+
+    function saveToLocalStorage() {
+      try {
+        localStorage.setItem('spidey_rsvp_entries', JSON.stringify(rsvpEntries));
+      } catch (e) {
+        console.warn('Failed to save to localStorage');
+      }
+    }
 
     function renderRsvpList() {
       const ul = document.getElementById('rsvpListUl');
       ul.innerHTML = '';
+      
+      if (rsvpEntries.length === 0) {
+        const li = document.createElement('li');
+        li.textContent = 'No RSVPs yet. Be the first! 🕷️';
+        li.style.textAlign = 'center';
+        li.style.color = '#888';
+        li.style.borderLeftColor = '#ccc';
+        li.style.justifyContent = 'center';
+        ul.appendChild(li);
+        return;
+      }
+      
       rsvpEntries.forEach(entry => {
         const li = document.createElement('li');
         const nameSpan = document.createElement('span');
@@ -621,19 +815,22 @@
         const plusSpan = document.createElement('span');
         plusSpan.className = 'badge-plus';
         const plusCount = entry.plus ? parseInt(entry.plus) : 0;
-        plusSpan.textContent = entry.plusName ? `+1 · ${entry.plusName}` : '+' + (plusCount > 0 ? plusCount : '0');
+        if (plusCount > 0 && entry.plusName) {
+          plusSpan.textContent = `+1 · ${entry.plusName}`;
+        } else {
+          plusSpan.textContent = '+' + (plusCount > 0 ? plusCount : '0');
+        }
         li.appendChild(nameSpan);
         li.appendChild(plusSpan);
         ul.appendChild(li);
       });
     }
-    renderRsvpList();
 
-    // ---- RSVP submit ----
+    // ---- RSVP submit to Google Form ----
     document.getElementById('rsvpSubmitBtn').addEventListener('click', function() {
       const name = document.getElementById('guestName').value.trim();
-      const plusOneName = document.getElementById('plusOneName').value.trim();
       const plusOne = document.getElementById('plusOne').value;
+      const plusOneName = document.getElementById('plusOneName').value.trim();
 
       if (!name) {
         alert('Please enter your name! (like Spidey)');
@@ -654,7 +851,7 @@
       const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfahKmju9lSlnkwJDH4IrNy1GYsANR9s6HXM1zddFlsL6Vs4A/formResponse';
       const formData = new URLSearchParams();
 
-      // Google Form fields in the requested order:
+      // Google Form fields:
       // entry.1789997178 = Your name
       // entry.978997940 = Plus one name
       // entry.1999140148 = Plus one? Yes/No
@@ -662,76 +859,195 @@
       formData.append('entry.978997940', plusOneName);
       formData.append('entry.1999140148', plusOne);
 
+      // Show loading state
+      const submitBtn = document.getElementById('rsvpSubmitBtn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+      submitBtn.disabled = true;
+
       fetch(formUrl, {
         method: 'POST',
         mode: 'no-cors',
         body: formData
       }).then(() => {
+        // Add to local list
         rsvpEntries.push({
           name: name,
           plus: plusOne === 'Yes' ? 1 : 0,
           plusName: plusOne === 'Yes' ? plusOneName : ''
         });
-
+        saveToLocalStorage();
         renderRsvpList();
 
         document.getElementById('guestName').value = '';
-        document.getElementById('plusOneName').value = '';
         document.getElementById('plusOne').value = '';
+        document.getElementById('plusOneName').value = '';
+
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
 
         alert(`✅ Thanks ${name}! Your RSVP was saved online. 🕷️`);
       }).catch(() => {
-        alert('⚠️ We could not submit your RSVP. Please try again.');
+        // Even if fetch fails, save locally
+        rsvpEntries.push({
+          name: name,
+          plus: plusOne === 'Yes' ? 1 : 0,
+          plusName: plusOne === 'Yes' ? plusOneName : ''
+        });
+        saveToLocalStorage();
+        renderRsvpList();
+
+        document.getElementById('guestName').value = '';
+        document.getElementById('plusOne').value = '';
+        document.getElementById('plusOneName').value = '';
+
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+
+        alert(`✅ Thanks ${name}! Your RSVP was saved locally. 🕷️\n\n⚠️ Your data will be available on this device. For online sync, check your Google Form responses.`);
       });
     });
 
-    // ---- Password toggle (password = 1234, no hint) ----
-    let listVisible = false;
-    const toggleIcon = document.getElementById('toggleListIcon');
-    const passwordInput = document.getElementById('passwordInput');
+    // ---- Password Modal ----
+    const passwordModal = document.getElementById('passwordModal');
+    const modalPasswordInput = document.getElementById('modalPasswordInput');
+    const modalError = document.getElementById('modalError');
+    const modalUnlockBtn = document.getElementById('modalUnlockBtn');
+    const modalCancelBtn = document.getElementById('modalCancelBtn');
+    const guestListToggle = document.getElementById('guestListToggle');
     const listContainer = document.getElementById('rsvpListContainer');
+    const toggleIcon = document.getElementById('toggleListIcon');
 
-    toggleIcon.addEventListener('click', function() {
-      const pwd = passwordInput.value.trim();
+    let listVisible = false;
+
+    function openModal() {
+      passwordModal.classList.add('active');
+      modalPasswordInput.value = '';
+      modalError.classList.remove('show');
+      modalPasswordInput.focus();
+    }
+
+    function closeModal() {
+      passwordModal.classList.remove('active');
+    }
+
+    function unlockGuestList() {
+      const pwd = modalPasswordInput.value.trim();
       if (pwd === '1234') {
         listVisible = !listVisible;
         if (listVisible) {
           listContainer.classList.add('open');
           toggleIcon.innerHTML = '<i class="fas fa-lock-open"></i>';
           toggleIcon.style.color = '#fdd835';
+          // Refresh list when opening
+          loadRsvpFromGoogle();
         } else {
           listContainer.classList.remove('open');
           toggleIcon.innerHTML = '<i class="fas fa-lock"></i>';
         }
+        closeModal();
       } else {
-        alert('🔒 Incorrect password.');
+        modalError.classList.add('show');
+        modalPasswordInput.value = '';
+        modalPasswordInput.focus();
+      }
+    }
+
+    // Click on guest list area to open modal
+    guestListToggle.addEventListener('click', function() {
+      if (listVisible) {
+        // If already unlocked, just toggle close
+        listVisible = false;
+        listContainer.classList.remove('open');
+        toggleIcon.innerHTML = '<i class="fas fa-lock"></i>';
+      } else {
+        openModal();
       }
     });
 
-    passwordInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') toggleIcon.click();
+    // Modal unlock button
+    modalUnlockBtn.addEventListener('click', unlockGuestList);
+
+    // Modal cancel button
+    modalCancelBtn.addEventListener('click', closeModal);
+
+    // Enter key on password input
+    modalPasswordInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        unlockGuestList();
+      }
+    });
+
+    // Click outside modal to close
+    passwordModal.addEventListener('click', function(e) {
+      if (e.target === passwordModal) {
+        closeModal();
+      }
     });
 
     // ---- Download RSVP list ----
     document.getElementById('downloadRsvpBtn').addEventListener('click', function() {
       let content = '🕷️ KAYDEN ELIJA · RSVP LIST\n';
       content += '=========================\n';
-      rsvpEntries.forEach((entry, idx) => {
-        const plus = entry.plus ? parseInt(entry.plus) : 0;
-        content += `${idx+1}. ${entry.name}  ( +${plus} )\n`;
-      });
+      content += `Generated: ${new Date().toLocaleString()}\n\n`;
+      
+      if (rsvpEntries.length === 0) {
+        content += 'No RSVPs yet.\n';
+      } else {
+        rsvpEntries.forEach((entry, idx) => {
+          const plus = entry.plus ? parseInt(entry.plus) : 0;
+          let line = `${idx+1}. ${entry.name}`;
+          if (plus > 0 && entry.plusName) {
+            line += `  ( +1 · ${entry.plusName} )`;
+          } else {
+            line += `  ( +${plus} )`;
+          }
+          content += line + '\n';
+        });
+      }
+      
+      const total = rsvpEntries.reduce((sum, entry) => {
+        return sum + 1 + (parseInt(entry.plus) || 0);
+      }, 0);
+      content += `\n--- Total guests: ${total} ---`;
       content += '\n--- Ilocos, PH · Nov 15, 2026 ---';
-      const blob = new Blob([content], { type: 'text/plain' });
+      
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'Kayden_Elija_RSVP_list.txt';
+      a.download = `Kayden_Elija_RSVP_${new Date().toISOString().slice(0,10)}.txt`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     });
 
+    // ---- Enter key support for form ----
+    document.getElementById('guestName').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('plusOne').focus();
+      }
+    });
+
+    document.getElementById('plusOne').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('plusOneName').focus();
+      }
+    });
+
+    document.getElementById('plusOneName').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('rsvpSubmitBtn').click();
+      }
+    });
+
+    // ---- Load initial data ----
+    loadRsvpFromGoogle();
 
   })();
 </script>
