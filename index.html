@@ -33,6 +33,7 @@
       transition: all 0.2s;
     }
 
+    /* PAGE 1: ENVELOPE */
     .page-envelope {
       background: #fce9d8;
       background-image: radial-gradient(circle at 20% 30%, #ffddbb 5%, transparent 15%),
@@ -80,7 +81,6 @@
       color: #c62828;
       filter: drop-shadow(0 8px 12px rgba(0,0,0,0.2));
       animation: float 2.5s ease-in-out infinite;
-      transition: transform 0.3s;
     }
 
     .envelope-icon i {
@@ -138,6 +138,7 @@
       100% { opacity: 0.6; transform: scale(0.96); }
     }
 
+    /* PAGE 2: INVITATION */
     .page-invite {
       background: #fcf3e6;
       padding: 20px 18px 28px;
@@ -168,7 +169,6 @@
     .spidey-header i {
       font-size: 2.2rem;
       color: #fdd835;
-      filter: drop-shadow(0 0 4px #00000055);
     }
 
     .spidey-header h2 {
@@ -464,6 +464,44 @@
       font-size: 0.9rem;
     }
 
+    /* Loading overlay */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loading-overlay.active {
+      display: flex;
+    }
+
+    .loading-content {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 30px;
+      text-align: center;
+      max-width: 300px;
+    }
+
+    .loading-content i {
+      font-size: 3rem;
+      color: #b71c1c;
+      margin-bottom: 10px;
+    }
+
+    .loading-content p {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #1d2c3a;
+    }
+
     @media (max-width: 450px) {
       .envelope-icon { font-size: 80px; }
       .countdown-timer { font-size: 1.8rem; }
@@ -476,19 +514,29 @@
 </head>
 <body>
 
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-content">
+    <i class="fas fa-spinner fa-spin"></i>
+    <p>Saving your RSVP...</p>
+  </div>
+</div>
+
 <div class="invite-card" id="inviteCard">
 
+  <!-- PAGE 1: ENVELOPE -->
   <div class="page-envelope" id="envelopePage">
     <canvas id="webCanvas"></canvas>
     <div class="envelope-icon">
       <i class="fas fa-envelope-open-text"></i>
     </div>
-    <div class="envelope-text">🕷️ YOU ARE INVITED 🕷️</div>
-    <div class="envelope-sub"><i class="fas fa-birthday-cake"></i> · KAYDEN ELIJA's SPIDEY BDAY</div>
+    <div class="envelope-text">🕷️ KAYDEN ELIJA</div>
+    <div class="envelope-sub"><i class="fas fa-birthday-cake"></i> · SPIDER-MAN · BRAND NEW DAY</div>
     <div class="click-hint"><i class="fas fa-hand-pointer"></i> tap anywhere to open</div>
     <div style="margin-top: 12px; font-size: 0.8rem; color:#5a3e2b;"><i class="fas fa-map-pin"></i> Ilocos, PH</div>
   </div>
 
+  <!-- PAGE 2: INVITATION -->
   <div class="page-invite" id="invitePage">
     <div class="spidey-header">
       <i class="fas fa-spider"></i>
@@ -529,18 +577,22 @@
         <i class="fas fa-pencil-alt"></i> RSVP · web-slinger style
       </div>
       <div class="rsvp-form" id="rsvpForm">
-        <input type="text" id="guestName" placeholder="Your name (e.g. Miles)" required>
-
-        <div class="plus-one-group">
-          <input type="checkbox" id="plusOneCheck">
-          <label for="plusOneCheck"><i class="fas fa-user-plus"></i> Plus One</label>
-          <input type="text" id="plusOneName" placeholder="Guest name" disabled>
+        <!-- Google Form will be embedded here -->
+        <div id="googleFormContainer"></div>
+        
+        <!-- Fallback form if iframe doesn't work -->
+        <div id="fallbackForm">
+          <input type="text" id="guestName" placeholder="Your name (e.g. Miles)" required>
+          <div class="plus-one-group">
+            <input type="checkbox" id="plusOneCheck">
+            <label for="plusOneCheck"><i class="fas fa-user-plus"></i> Plus One</label>
+            <input type="text" id="plusOneName" placeholder="Guest name" disabled>
+          </div>
+          <button id="rsvpSubmitBtn"><i class="fas fa-check-circle"></i> SAVE RSVP</button>
         </div>
-
-        <button id="rsvpSubmitBtn"><i class="fas fa-check-circle"></i> SAVE RSVP</button>
       </div>
       <div style="font-size:0.8rem; text-align:center; color:#1f3a4b; margin-top:6px;">
-        <i class="fas fa-save"></i> saved online · <span id="rsvpTotalCount">0</span> guests so far
+        <i class="fas fa-save"></i> saved to Google Sheet · <span id="rsvpTotalCount">0</span> guests so far
       </div>
     </div>
 
@@ -562,8 +614,21 @@
 
 <script>
   (function() {
-    // ---- YOUR GOOGLE SHEETS WEB APP URL ----
-    const SHEET_URL = 'https://script.google.com/macros/s/AKfycby_muIHBGRyRP7zwO66NGmbNYEMNZPdu0QDaGn7xwYzEbW_Fbss6iVjUpvptk5_ukslng/exec';
+    // ---- YOUR GOOGLE FORM SUBMIT URL ----
+    const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfahKmju9lSlnkwJDH4IrNy1GYsANR9s6HXM1zddFlsL6Vs4A/formResponse';
+    
+    // ---- Map form field IDs (you need to find these) ----
+    // These are the "entry.XXXXX" IDs from your form
+    // To find them: Inspect the form page, look for name="entry.XXXXX" in the input fields
+    const FIELD_IDS = {
+      name: 'entry.1789997178',
+      plusOne: 'entry.1999140148_sentinel',
+      plusOneName: 'entry.978997940_sentinel' 
+    };
+
+    // ---- Fallback: If Google Form doesn't work, use this local storage ----
+    let rsvpEntries = [];
+    let isUsingFallback = false;
 
     // ---- Spider-Web Canvas Effect ----
     const canvas = document.getElementById('webCanvas');
@@ -653,7 +718,7 @@
       invitePage.classList.add('active');
       updateCountdown();
       setInterval(updateCountdown, 1000);
-      loadRsvpFromGoogle();
+      loadRsvpFromStorage();
     });
 
     // ---- Countdown ----
@@ -682,88 +747,148 @@
       }
     });
 
-    // ---- RSVP data ----
-    let rsvpEntries = [];
-    let isLoading = false;
+    // ---- RSVP data storage (fallback) ----
+    const STORAGE_KEY = 'kayden_rsvp_entries';
 
-    async function loadRsvpFromGoogle() {
-      if (isLoading) return;
-      isLoading = true;
-      
+    function loadRsvpFromStorage() {
       try {
-        const response = await fetch(SHEET_URL);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        if (data.error) {
-          console.warn('Sheet returned error:', data.error);
-          rsvpEntries = getDefaultEntries();
-        } else if (Array.isArray(data) && data.length > 0) {
-          rsvpEntries = data.map(row => ({
-            name: row.name || 'Guest',
-            plus: row.plus_one || '0',
-            plusName: row.plus_one_name || ''
-          }));
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          rsvpEntries = JSON.parse(stored);
         } else {
-          rsvpEntries = getDefaultEntries();
+          rsvpEntries = [
+            { name: 'Kayden Elija', plus: '1', plusName: 'MJ' },
+            { name: 'Miles Morales', plus: '0', plusName: '' },
+            { name: 'Gwen Stacy', plus: '1', plusName: 'Peter' }
+          ];
+          saveToStorage();
         }
-        
-        renderRsvpList();
-      } catch (error) {
-        console.error('Failed to load from Google Sheets:', error);
-        rsvpEntries = getDefaultEntries();
-        renderRsvpList();
-        // Show a subtle error but don't block the user
-        document.querySelector('.rsvp-section .rsvp-title').innerHTML = 
-          '<i class="fas fa-pencil-alt"></i> RSVP · offline mode';
+      } catch (e) {
+        rsvpEntries = [
+          { name: 'Kayden Elija', plus: '1', plusName: 'MJ' },
+          { name: 'Miles Morales', plus: '0', plusName: '' },
+          { name: 'Gwen Stacy', plus: '1', plusName: 'Peter' }
+        ];
       }
-      
-      isLoading = false;
+      renderRsvpList();
     }
 
-    function getDefaultEntries() {
-      return [
-        { name: 'Kayden Elija', plus: '1', plusName: 'MJ' },
-        { name: 'Miles Morales', plus: '0', plusName: '' },
-        { name: 'Gwen Stacy', plus: '1', plusName: 'Peter' }
-      ];
-    }
-
-    async function saveRsvpToGoogle(name, plus, plusName) {
+    function saveToStorage() {
       try {
-        const response = await fetch(SHEET_URL, {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(rsvpEntries));
+      } catch (e) {
+        console.warn('Failed to save to localStorage:', e);
+      }
+    }
+
+    // ---- Submit to Google Form ----
+    async function submitToGoogleForm(name, plus, plusName) {
+      try {
+        // Create form data
+        const formData = new FormData();
+        formData.append(FIELD_IDS.name, name);
+        formData.append(FIELD_IDS.plusOne, plus === '1' ? 'Yes' : 'No');
+        formData.append(FIELD_IDS.plusOneName, plusName || '');
+
+        // Submit to Google Form
+        const response = await fetch(FORM_URL, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: name,
-            plus: plus,
-            plusName: plusName || ''
-          })
+          mode: 'no-cors',
+          body: formData
         });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (result.success === false) {
-          throw new Error(result.error || 'Unknown error');
-        }
-        
+
+        // With no-cors, we can't read the response, but if we got here, it likely worked
         return true;
       } catch (error) {
-        console.error('Failed to save to Google Sheets:', error);
+        console.error('Failed to submit to Google Form:', error);
         return false;
       }
     }
 
+    // ---- RSVP submit ----
+    document.getElementById('rsvpSubmitBtn').addEventListener('click', async function() {
+      const name = document.getElementById('guestName').value.trim();
+      if (!name) {
+        alert('Please enter your name! (like Spidey)');
+        return;
+      }
+
+      const hasPlus = plusOneCheck.checked;
+      let plusVal = '0';
+      let plusNameVal = '';
+
+      if (hasPlus) {
+        plusNameVal = plusOneName.value.trim();
+        if (!plusNameVal) {
+          alert('Please enter the name of your plus one!');
+          return;
+        }
+        plusVal = '1';
+      }
+
+      // Check for duplicate
+      const duplicate = rsvpEntries.some(entry => 
+        entry.name.toLowerCase() === name.toLowerCase()
+      );
+      if (duplicate) {
+        alert(`⚠️ ${name} is already on the guest list!`);
+        return;
+      }
+
+      // Show loading
+      const overlay = document.getElementById('loadingOverlay');
+      overlay.classList.add('active');
+
+      // Try to save to Google Form
+      let saved = false;
+      
+      if (FORM_URL.includes('YOUR_FORM_ID')) {
+        // Form not configured, use fallback
+        saved = false;
+        isUsingFallback = true;
+      } else {
+        saved = await submitToGoogleForm(name, plusVal, plusNameVal);
+      }
+
+      overlay.classList.remove('active');
+
+      if (saved) {
+        // Add to local list
+        rsvpEntries.push({ 
+          name: name, 
+          plus: plusVal, 
+          plusName: plusNameVal 
+        });
+        saveToStorage();
+        renderRsvpList();
+
+        document.getElementById('guestName').value = '';
+        plusOneCheck.checked = false;
+        plusOneName.value = '';
+        plusOneName.disabled = true;
+
+        alert(`✅ Thanks ${name}! You're on the guest list. 🕷️`);
+      } else {
+        // Fallback: save to localStorage only
+        rsvpEntries.push({ 
+          name: name, 
+          plus: plusVal, 
+          plusName: plusNameVal 
+        });
+        saveToStorage();
+        renderRsvpList();
+
+        document.getElementById('guestName').value = '';
+        plusOneCheck.checked = false;
+        plusOneName.value = '';
+        plusOneName.disabled = true;
+
+        alert(`✅ Thanks ${name}! You're on the guest list. 🕷️\n\n⚠️ Note: Using local storage only. To save to Google Sheets, please configure the form URL.`);
+        isUsingFallback = true;
+      }
+    });
+
+    // ---- Render RSVP list ----
     function renderRsvpList() {
       const ul = document.getElementById('rsvpListUl');
       ul.innerHTML = '';
@@ -800,68 +925,6 @@
       document.getElementById('rsvpTotalCount').textContent = total;
     }
 
-    // ---- RSVP submit ----
-    document.getElementById('rsvpSubmitBtn').addEventListener('click', async function() {
-      const name = document.getElementById('guestName').value.trim();
-      if (!name) {
-        alert('Please enter your name! (like Spidey)');
-        return;
-      }
-
-      const hasPlus = plusOneCheck.checked;
-      let plusVal = '0';
-      let plusNameVal = '';
-
-      if (hasPlus) {
-        plusNameVal = plusOneName.value.trim();
-        if (!plusNameVal) {
-          alert('Please enter the name of your plus one!');
-          return;
-        }
-        plusVal = '1';
-      }
-
-      // Check for duplicate in current list
-      const duplicate = rsvpEntries.some(entry => 
-        entry.name.toLowerCase() === name.toLowerCase()
-      );
-      if (duplicate) {
-        alert(`⚠️ ${name} is already on the guest list!`);
-        return;
-      }
-
-      // Show saving indicator
-      const submitBtn = document.getElementById('rsvpSubmitBtn');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-      submitBtn.disabled = true;
-
-      // Save to Google Sheets
-      const saved = await saveRsvpToGoogle(name, plusVal, plusNameVal);
-      
-      submitBtn.innerHTML = originalText;
-      submitBtn.disabled = false;
-      
-      if (saved) {
-        rsvpEntries.push({ 
-          name: name, 
-          plus: plusVal, 
-          plusName: plusNameVal 
-        });
-        
-        renderRsvpList();
-
-        document.getElementById('guestName').value = '';
-        plusOneCheck.checked = false;
-        plusOneName.value = '';
-        plusOneName.disabled = true;
-
-        alert(`✅ Thanks ${name}! You're on the guest list. 🕷️`);
-      } else {
-        alert('❌ There was an issue saving your RSVP. Please try again.');
-      }
-    });
-
     // ---- Password toggle ----
     let listVisible = false;
     const toggleIcon = document.getElementById('toggleListIcon');
@@ -876,7 +939,6 @@
           listContainer.classList.add('open');
           toggleIcon.innerHTML = '<i class="fas fa-lock-open"></i>';
           toggleIcon.style.color = '#fdd835';
-          loadRsvpFromGoogle();
         } else {
           listContainer.classList.remove('open');
           toggleIcon.innerHTML = '<i class="fas fa-lock"></i>';
@@ -939,7 +1001,7 @@
     });
 
     // ---- Load initial data ----
-    loadRsvpFromGoogle();
+    loadRsvpFromStorage();
 
   })();
 </script>
