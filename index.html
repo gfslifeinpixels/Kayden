@@ -3,555 +3,721 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>🕷️ Kayden Elija · Spider-Man Invite</title>
+  <title>Kayden Elija · Spidey Invite</title>
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Segoe UI', Roboto, 'Trebuchet MS', sans-serif;
+      font-family: 'Segoe UI', 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
     }
+
     body {
       min-height: 100vh;
+      background: linear-gradient(145deg, #0b1a2e 0%, #1c3a5f 100%);
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 16px;
-      /* SPIDER-MAN THEMED BACKGROUND: city skyline & web pattern */
-      background: #0b0e1a;
-      background-image: url('https://media.easy-peasy.ai/27feb2bb-aeb4-4a83-9fb6-8f3f2a15885e/d1f4e4c4-5883-4cb8-baeb-f8fbf6cc6a69_medium.webp');
-      background-size: cover;
-      background-position: center;
-        /* city silhouette */
-        linear-gradient(180deg, #1a1f2e 0%, #0b0e1a 100%),
-        /* web pattern overlay */
-        repeating-linear-gradient(45deg, rgba(204, 34, 51, 0.05) 0px, rgba(204, 34, 51, 0.05) 20px, rgba(255, 255, 255, 0.02) 20px, rgba(255, 255, 255, 0.02) 40px),
-        /* building shapes */
-        repeating-linear-gradient(90deg, rgba(40, 50, 70, 0.3) 0px, rgba(40, 50, 70, 0.3) 30px, rgba(20, 25, 40, 0.5) 30px, rgba(20, 25, 40, 0.5) 60px);
-      background-blend-mode: overlay, normal, normal;
     }
+
+    /* main card */
     .invite-card {
-      max-width: 560px;
+      max-width: 500px;
       width: 100%;
-      background: #e6e9f0;
+      background: #fef9f0;
       border-radius: 48px 48px 32px 32px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 0 3px #cc2233, 0 0 0 6px #1a1f2e;
-      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 0 4px #d32f2f, 0 0 0 8px #b71c1c;
       position: relative;
+      overflow: hidden;
       transition: all 0.2s;
-      backdrop-filter: blur(2px);
     }
-    /* ----- FLOATING SPIDER-MAN BACKGROUND (opaque) ----- */
-    .float-bg {
+
+    /* ===== PAGE 1: ENVELOPE with SPIDER/WEB EFFECT ===== */
+    .page-envelope {
+      background: #fce9d8;
+      background-image: radial-gradient(circle at 20% 30%, #ffddbb 5%, transparent 15%),
+                        radial-gradient(circle at 80% 70%, #ffddbb 8%, transparent 20%);
+      padding: 28px 20px 30px;
+      text-align: center;
+      transition: opacity 0.4s, transform 0.4s;
+      cursor: pointer;
+      min-height: 460px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 48px 48px 0 0;
+      position: relative;
+      border-bottom: 6px dashed #b71c1c;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    /* Spider-Web Background (canvas) */
+    #webCanvas {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
+      display: block;
       pointer-events: none;
       z-index: 0;
-      overflow: hidden;
-      opacity: 0.25;
-      mix-blend-mode: screen;
-    }
-    .float-icon {
-      position: absolute;
-      font-size: 4.5rem;
-      color: #cc2233;
-      text-shadow: 0 0 20px #ee3344, 0 0 40px #aa1122;
-      animation: floatAnim 10s infinite alternate ease-in-out;
-      will-change: transform;
       opacity: 0.5;
+      mix-blend-mode: multiply;
     }
-    .float-icon:nth-child(1) { top: 6%; left: 5%; font-size: 5.2rem; animation-duration: 12s; opacity: 0.4; }
-    .float-icon:nth-child(2) { top: 55%; right: 2%; font-size: 5rem; animation-duration: 14s; animation-delay: -3s; opacity: 0.45; }
-    .float-icon:nth-child(3) { bottom: 8%; left: 12%; font-size: 6rem; animation-duration: 16s; animation-delay: -5s; opacity: 0.3; }
-    .float-icon:nth-child(4) { top: 22%; right: 10%; font-size: 4rem; animation-duration: 11s; animation-delay: -1s; opacity: 0.5; }
-    .float-icon:nth-child(5) { bottom: 28%; right: 20%; font-size: 5.8rem; animation-duration: 15s; animation-delay: -7s; opacity: 0.35; }
-    .float-icon:nth-child(6) { top: 40%; left: 18%; font-size: 3.8rem; animation-duration: 13s; animation-delay: -2s; opacity: 0.5; }
-    .float-icon:nth-child(7) { top: 70%; left: 4%; font-size: 4.2rem; animation-duration: 9s; animation-delay: -4s; opacity: 0.4; }
-    .float-icon:nth-child(8) { top: 15%; right: 25%; font-size: 4.5rem; animation-duration: 11s; animation-delay: -6s; opacity: 0.3; }
 
-    @keyframes floatAnim {
-      0% { transform: translate(0, 0) rotate(0deg) scale(1) skew(0deg); }
-      33% { transform: translate(15px, -22px) rotate(8deg) scale(1.08) skew(2deg); }
-      66% { transform: translate(-12px, 18px) rotate(-6deg) scale(0.92) skew(-2deg); }
-      100% { transform: translate(8px, -10px) rotate(3deg) scale(1.03) skew(0deg); }
-    }
-    /* content above bg */
-    .page-mail, .page-party {
+    .page-envelope *:not(canvas) {
       position: relative;
       z-index: 2;
-      backdrop-filter: blur(0px);
     }
-    /* ---- PAGE 1 : MAIL ---- */
-    .page-mail {
-      background: linear-gradient(145deg, #d6dce8, #c2cbdb);
-      padding: 32px 24px 40px;
-      text-align: center;
-      cursor: pointer;
-      border-bottom: 4px solid #cc2233;
-      transition: background 0.2s;
-      box-shadow: inset 0 0 0 2px #b0c2d6;
+
+    .page-envelope.hidden {
+      display: none;
     }
-    .page-mail:hover {
-      background: #cbd3e2;
-    }
-    .mail-icon {
-      font-size: 5rem;
-      color: #cc2233;
+
+    .envelope-icon {
+      font-size: 120px;
+      color: #c62828;
       filter: drop-shadow(0 8px 12px rgba(0,0,0,0.2));
-      display: block;
-      margin-bottom: 4px;
+      animation: float 2.5s ease-in-out infinite;
+      transition: transform 0.3s;
     }
-    .mail-title {
+
+    .envelope-icon i {
+      background: #fff6e5;
+      padding: 10px 18px;
+      border-radius: 60px;
+      box-shadow: inset 0 -4px 0 #b71c1c;
+    }
+
+    .envelope-text {
+      margin-top: 18px;
+      background: #b71c1c;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 60px;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      box-shadow: 0 6px 0 #7f0000;
+      transform: rotate(-1deg);
+      border: 2px solid #fdd835;
+    }
+
+    .envelope-sub {
+      margin-top: 12px;
+      color: #1f3a4b;
+      background: rgba(255,215,0,0.3);
+      padding: 6px 20px;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      backdrop-filter: blur(2px);
+    }
+
+    .click-hint {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      background: #2e2e2e;
+      color: #ffd966;
+      padding: 8px 22px;
+      border-radius: 40px;
+      animation: pulse 1.8s infinite;
+      border: 2px solid #fdd835;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px) rotate(-2deg); }
+      50% { transform: translateY(-12px) rotate(2deg); }
+      100% { transform: translateY(0px) rotate(-2deg); }
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.6; transform: scale(0.96); }
+      50% { opacity: 1; transform: scale(1.02); }
+      100% { opacity: 0.6; transform: scale(0.96); }
+    }
+
+    /* ===== PAGE 2: INVITATION ===== */
+    .page-invite {
+      background: #fcf3e6;
+      padding: 20px 18px 28px;
+      border-radius: 48px 48px 32px 32px;
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.05"><path d="M20 20 L80 20 L80 80 L20 80 Z" stroke="%23b71c1c" stroke-width="2" fill="none"/><circle cx="50" cy="50" r="18" stroke="%23b71c1c" stroke-width="2" fill="none"/></svg>');
+      background-size: 80px 80px;
+    }
+
+    .page-invite.active {
+      display: flex;
+    }
+
+    .spidey-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #b71c1c;
+      padding: 10px 18px 10px 22px;
+      border-radius: 60px;
+      color: white;
+      border: 3px solid #fdd835;
+      box-shadow: 0 6px 0 #7f0000;
+    }
+
+    .spidey-header i {
+      font-size: 2.2rem;
+      color: #fdd835;
+      filter: drop-shadow(0 0 4px #00000055);
+    }
+
+    .spidey-header h2 {
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+      text-shadow: 2px 2px 0 #7f0000;
+    }
+
+    .countdown-box {
+      background: #0d2b44;
+      padding: 14px 6px;
+      border-radius: 50px;
+      color: white;
+      text-align: center;
+      border: 3px solid #fdd835;
+      background: linear-gradient(145deg, #0f3a5a, #08212f);
+      box-shadow: inset 0 -4px 0 #021016;
+    }
+
+    .countdown-timer {
       font-size: 2.4rem;
       font-weight: 800;
-      color: #0c1f30;
-      background: #b3c8df;
+      letter-spacing: 4px;
+      background: #fdd835;
+      color: #1f2a3a;
       display: inline-block;
-      padding: 0 28px;
+      padding: 0 22px;
       border-radius: 60px;
-      box-shadow: inset 0 -4px 0 #cc2233, 0 4px 0 #1d2d42;
-      letter-spacing: 2px;
+      margin-bottom: 4px;
+      font-family: 'Courier New', monospace;
     }
-    .mail-sub {
-      font-size: 1.2rem;
-      color: #112233;
-      background: #cdd9ea;
-      padding: 8px 22px;
-      border-radius: 60px;
-      margin: 16px auto 12px;
-      display: inline-block;
-      font-weight: 600;
-      box-shadow: inset 0 -2px 0 #cc2233;
-    }
-    .countdown-badge {
-      background: #16212e;
-      color: #d7e3f5;
-      padding: 18px 12px;
-      border-radius: 80px;
-      margin: 16px 0 10px;
-      display: flex;
-      justify-content: center;
-      gap: 18px;
-      flex-wrap: wrap;
-      box-shadow: 0 6px 0 #080f17, inset 0 2px 10px #cc2233;
-      border: 1px solid #cc2233;
-    }
-    .countdown-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-width: 58px;
-    }
-    .countdown-item span:first-child {
-      font-size: 2rem;
-      font-weight: 700;
-      background: #b2cae3;
-      color: #0b1e2d;
-      padding: 4px 12px;
-      border-radius: 30px;
-      min-width: 54px;
-      box-shadow: inset 0 -2px 0 #cc2233;
-    }
-    .countdown-item .label {
-      font-size: 0.6rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-top: 4px;
-      color: #9bb2cf;
-      font-weight: 700;
-    }
-    .click-hint {
-      margin-top: 18px;
-      background: #1d3143;
-      color: #e2ecfa;
-      padding: 10px 28px;
-      border-radius: 60px;
-      display: inline-block;
-      font-weight: 700;
-      box-shadow: 0 5px 0 #0d1823;
-      border: none;
-      font-size: 1rem;
-    }
-    .click-hint i { margin-right: 8px; }
 
-    /* ---- PAGE 2 : PARTY ---- */
-    .page-party {
-      background: #e4eaf3;
-      padding: 28px 22px 34px;
-      display: block;
-      position: relative;
-      z-index: 2;
-      border-top: 2px solid #cc2233;
-    }
-    .party-header {
-      text-align: center;
-      margin-bottom: 16px;
-    }
-    .party-header h2 {
-      font-size: 2.6rem;
-      font-weight: 900;
-      color: #0e1f30;
-      background: #c2d3e9;
+    .countdown-label {
+      font-size: 0.9rem;
+      background: #00000055;
+      padding: 4px 18px;
+      border-radius: 30px;
       display: inline-block;
-      padding: 0 28px;
-      border-radius: 60px;
-      box-shadow: inset 0 -4px 0 #cc2233;
-      letter-spacing: 2px;
-    }
-    .party-header .sub {
-      color: #1b3145;
+      margin-top: 4px;
       font-weight: 600;
-      background: #c6d7ed;
-      padding: 6px 20px;
-      border-radius: 60px;
-      display: inline-block;
-      margin-top: 6px;
-      font-size: 1rem;
-      box-shadow: inset 0 -2px 0 #cc2233;
     }
-    .detail-grid {
-      background: #d0dcee;
-      border-radius: 40px;
-      padding: 18px 16px;
-      box-shadow: inset 0 0 0 2px #a3bad4, 0 8px 14px rgba(0,0,0,0.08);
-      margin: 14px 0 18px;
-    }
-    .detail-row {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 12px 8px;
-      border-bottom: 1px dashed #cc2233;
-    }
-    .detail-row:last-child { border-bottom: none; }
-    .detail-row i {
-      width: 32px;
-      font-size: 1.6rem;
-      color: #cc2233;
-      text-align: center;
-    }
-    .detail-row .info {
-      font-weight: 500;
-      color: #142433;
-      font-size: 1rem;
-    }
-    .detail-row .info strong {
-      font-weight: 800;
-      color: #cc2233;
-    }
-    .rsvp-section {
-      background: #c6d5ea;
-      background-image: linear-gradient(145deg, #dbe5f2, #c2d2e7);
-      border-radius: 40px;
-      padding: 20px 18px 24px;
-      border: 1px solid #cc2233;
-      box-shadow: inset 0 0 0 1px #e3ecf7;
-    }
-    .rsvp-title {
-      font-weight: 800;
-      color: #0c1f31;
-      font-size: 1.4rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-    .rsvp-title i { color: #cc2233; }
-    .rsvp-form {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .form-group {
+
+    .party-details {
+      background: white;
+      border-radius: 30px;
+      padding: 16px 16px 12px;
+      box-shadow: 0 6px 0 #b0b0b0, 0 8px 16px rgba(0,0,0,0.1);
+      border: 2px solid #b71c1c;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       gap: 8px 12px;
     }
-    .form-group label {
-      font-weight: 700;
-      color: #102436;
-      min-width: 80px;
+
+    .party-details i {
+      color: #b71c1c;
+      width: 24px;
+      font-size: 1.3rem;
     }
-    .form-group input[type="text"] {
-      flex: 1;
-      min-width: 160px;
-      padding: 12px 16px;
-      border: none;
-      border-radius: 60px;
-      background: #f0f5fc;
+
+    .party-details span {
+      font-weight: 600;
+      color: #1d2c3a;
       font-size: 1rem;
-      box-shadow: inset 0 2px 6px rgba(0,0,0,0.03), 0 0 0 2px #cc2233;
-      transition: 0.2s;
     }
-    .form-group input[type="text"]:focus {
-      outline: none;
-      box-shadow: inset 0 2px 6px rgba(0,0,0,0.02), 0 0 0 3px #cc2233;
-    }
-    .plus-one-group {
-      display: flex;
-      align-items: center;
-      gap: 8px 14px;
-      flex-wrap: wrap;
-    }
-    .plus-one-group label {
+
+    .party-details .highlight {
+      background: #fdd835;
+      padding: 2px 14px;
+      border-radius: 40px;
       font-weight: 700;
-      color: #102436;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      color: #1d1d1d;
     }
-    .plus-one-group input[type="checkbox"] {
-      width: 22px;
-      height: 22px;
-      accent-color: #cc2233;
-      transform: scale(1.1);
+
+    .rsvp-section {
+      background: #e8f0f5;
+      border-radius: 30px;
+      padding: 16px 14px 18px;
+      border: 3px solid #b71c1c;
+      box-shadow: inset 0 0 0 2px #fdd835;
     }
-    .rsvp-actions {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 8px;
-      gap: 12px;
-    }
-    .btn-rsvp {
-      background: #1f3348;
-      border: none;
-      color: #eef3fc;
+
+    .rsvp-title {
+      font-size: 1.4rem;
       font-weight: 700;
-      padding: 14px 28px;
-      border-radius: 60px;
-      font-size: 1.1rem;
-      box-shadow: 0 6px 0 #0d1a28;
-      cursor: pointer;
-      transition: 0.08s linear;
-      display: inline-flex;
+      color: #b71c1c;
+      display: flex;
       align-items: center;
       gap: 10px;
-      flex: 1 1 auto;
-      justify-content: center;
+      margin-bottom: 12px;
     }
-    .btn-rsvp:active { transform: translateY(4px); box-shadow: 0 2px 0 #0d1a28; }
-    .btn-download {
-      background: #cc2233;
-      border: none;
-      color: #f0f7ff;
-      font-weight: 700;
-      padding: 14px 22px;
-      border-radius: 60px;
-      font-size: 1rem;
-      box-shadow: 0 6px 0 #881122;
-      cursor: pointer;
-      transition: 0.08s linear;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      flex: 1 1 auto;
-      justify-content: center;
-    }
-    .btn-download:active { transform: translateY(4px); box-shadow: 0 2px 0 #881122; }
-    .rsvp-response {
-      margin-top: 14px;
-      background: #1a2d3f;
-      color: #dce9f7;
-      padding: 12px 16px;
-      border-radius: 60px;
-      font-weight: 500;
-      text-align: center;
-      font-size: 0.95rem;
-      border-left: 6px solid #cc2233;
-    }
-    .footnote {
-      margin-top: 16px;
-      font-size: 0.7rem;
-      text-align: center;
-      color: #2b4057;
-      opacity: 0.8;
-    }
-    .hidden-page { display: none !important; }
 
-    @media (max-width: 480px) {
-      .mail-title { font-size: 1.7rem; }
-      .countdown-item span:first-child { font-size: 1.6rem; min-width: 44px; }
-      .party-header h2 { font-size: 2rem; }
+    .rsvp-title i {
+      background: #b71c1c;
+      color: #fdd835;
+      padding: 6px 12px;
+      border-radius: 40px;
+      font-size: 1rem;
+    }
+
+    .rsvp-form input, .rsvp-form select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 60px;
+      border: 2px solid #b71c1c;
+      font-size: 1rem;
+      margin-bottom: 10px;
+      background: white;
+      font-weight: 500;
+    }
+
+    .rsvp-form .row-duo {
+      display: flex;
+      gap: 10px;
+    }
+
+    .rsvp-form .row-duo input {
+      flex: 1;
+    }
+
+    .rsvp-form button {
+      background: #b71c1c;
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      width: 100%;
+      box-shadow: 0 6px 0 #7f0000;
+      transition: 0.06s linear;
+      cursor: pointer;
+      border: 2px solid #fdd835;
+      letter-spacing: 1px;
+    }
+
+    .rsvp-form button:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #7f0000;
+    }
+
+    .rsvp-list-area {
+      margin-top: 18px;
+      background: #2c3e4e;
+      border-radius: 30px;
+      padding: 8px 4px 4px 4px;
+      border: 3px solid #fdd835;
+    }
+
+    .rsvp-toggle {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 6px 16px 4px 16px;
+      gap: 18px;
+      color: white;
+      font-weight: 600;
+    }
+
+    .rsvp-toggle i {
+      font-size: 1.8rem;
+      color: #fdd835;
+      cursor: pointer;
+      transition: 0.2s;
+      background: #1f2e3b;
+      padding: 4px 14px;
+      border-radius: 40px;
+      border: 2px solid #fdd835;
+    }
+
+    .rsvp-toggle i:active {
+      transform: scale(0.86);
+    }
+
+    .rsvp-password-input {
+      background: white;
+      border: 2px solid #fdd835;
+      padding: 6px 14px;
+      border-radius: 40px;
+      width: 120px;
+      font-size: 0.8rem;
+    }
+
+    .rsvp-list-hidden {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease, padding 0.3s;
+      background: #fef9f0;
+      border-radius: 0 0 28px 28px;
+      padding: 0 8px;
+    }
+
+    .rsvp-list-hidden.open {
+      max-height: 400px;
+      padding: 14px 8px 18px;
+      overflow-y: auto;
+    }
+
+    .rsvp-list-hidden ul {
+      list-style: none;
+      padding: 4px 0;
+      margin: 0;
+    }
+
+    .rsvp-list-hidden li {
+      background: white;
+      margin: 5px 0;
+      padding: 8px 16px;
+      border-radius: 40px;
+      border-left: 8px solid #b71c1c;
+      font-weight: 500;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.95rem;
+    }
+
+    .badge-plus {
+      background: #fdd835;
+      padding: 2px 14px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #1f1f1f;
+    }
+
+    .download-btn {
+      background: #0d3a5c;
+      color: white;
+      border: none;
+      border-radius: 40px;
+      padding: 8px 16px;
+      font-weight: 700;
+      margin-top: 6px;
+      border: 2px solid #fdd835;
+      width: 100%;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 450px) {
+      .envelope-icon { font-size: 80px; }
+      .countdown-timer { font-size: 1.8rem; }
     }
   </style>
 </head>
 <body>
+
 <div class="invite-card" id="inviteCard">
-  <!-- FLOATING SPIDER-MAN BG: spider, web, mask, city -->
-  <div class="float-bg">
-    <i class="fas fa-spider float-icon"></i>
-    <i class="fas fa-spider float-icon"></i>
-    <i class="fas fa-spider float-icon"></i>
-    <i class="fas fa-city float-icon"></i>
-    <i class="fas fa-city float-icon"></i>
-    <i class="fas fa-mask float-icon"></i>
-    <i class="fas fa-spider-web float-icon"></i>
-    <i class="fas fa-spider-web float-icon"></i>
+
+  <!-- PAGE 1: ENVELOPE with Spider-Web Canvas -->
+  <div class="page-envelope" id="envelopePage">
+    <canvas id="webCanvas"></canvas>
+    <div class="envelope-icon">
+      <i class="fas fa-envelope-open-text"></i>
+    </div>
+    <div class="envelope-text">🕷️ KAYDEN ELIJA</div>
+    <div class="envelope-sub"><i class="fas fa-birthday-cake"></i> · SPIDER-MAN · BRAND NEW DAY</div>
+    <div class="click-hint"><i class="fas fa-hand-pointer"></i> tap anywhere to open</div>
+    <div style="margin-top: 12px; font-size: 0.8rem; color:#5a3e2b;"><i class="fas fa-map-pin"></i> Ilocos, PH</div>
   </div>
 
-  <!-- PAGE 1 : MAIL -->
-  <div class="page-mail" id="pageMail">
-    <i class="fas fa-envelope-open-text mail-icon"></i>
-    <div class="mail-title">🕷️ Kayden Elija</div>
-    <div class="mail-sub"><i class="fas fa-spider" style="color:#cc2233;"></i> Spider-Man · you're invited</div>
-    <div class="countdown-badge" id="countdownContainer">
-      <div class="countdown-item"><span id="cdDays">--</span><span class="label">Days</span></div>
-      <div class="countdown-item"><span id="cdHours">--</span><span class="label">Hrs</span></div>
-      <div class="countdown-item"><span id="cdMinutes">--</span><span class="label">Min</span></div>
-      <div class="countdown-item"><span id="cdSeconds">--</span><span class="label">Sec</span></div>
-    </div>
-    <div class="click-hint"><i class="fas fa-hand-pointer"></i> tap anywhere to swing in</div>
-    <div style="margin-top: 12px; font-size:0.85rem; color:#1d3853;"><i class="fas fa-map-pin"></i> Ilocos, Philippines · 3 PM</div>
-  </div>
-
-  <!-- PAGE 2 : PARTY + RSVP -->
-  <div class="page-party hidden-page" id="pageParty">
-    <div class="party-header">
-      <h2>🕸️ Kayden</h2>
-      <div class="sub">🕷️ web-slinger · 1st adventure</div>
-    </div>
-    <div class="detail-grid">
-      <div class="detail-row"><i class="fas fa-calendar-alt"></i><span class="info"><strong>November 15, 2026</strong> · Sunday</span></div>
-      <div class="detail-row"><i class="fas fa-clock"></i><span class="info"><strong>3:00 PM</strong> (Manila time)</span></div>
-      <div class="detail-row"><i class="fas fa-map-marker-alt"></i><span class="info"><strong>📍 Ilocos, Philippines</strong> · Spider-Lair</span></div>
-      <div class="detail-row"><i class="fas fa-spider-web"></i><span class="info">🕸️ web-slinging · obstacle course · mask painting</span></div>
+  <!-- PAGE 2: INVITATION DETAILS + RSVP -->
+  <div class="page-invite" id="invitePage">
+    <div class="spidey-header">
+      <i class="fas fa-spider"></i>
+      <h2>🕸️ KAYDEN · 2026</h2>
+      <i class="fas fa-mask"></i>
     </div>
 
+    <!-- COUNTDOWN -->
+    <div class="countdown-box">
+      <div class="countdown-timer" id="countdownDisplay">--d --h --m</div>
+      <div class="countdown-label"><i class="fas fa-clock"></i> NOV 15, 2026 · 3PM</div>
+    </div>
+
+    <!-- party details -->
+    <div class="party-details">
+      <i class="fas fa-map-marker-alt"></i><span>Ilocos, Philippines</span>
+      <i class="fas fa-calendar-day"></i><span class="highlight">Nov 15 · 3pm</span>
+      <i class="fas fa-birthday-cake"></i><span>Spider-Man theme!</span>
+      <i class="fas fa-child"></i><span>Kids friendly</span>
+    </div>
+
+    <!-- RSVP FORM -->
     <div class="rsvp-section">
-      <div class="rsvp-title"><i class="fas fa-asterisk"></i> RSVP · join the web</div>
-      <div class="rsvp-form">
-        <div class="form-group">
-          <label><i class="fas fa-user-secret"></i> Name</label>
-          <input type="text" id="guestName" placeholder="Your hero name" value="">
+      <div class="rsvp-title">
+        <i class="fas fa-pencil-alt"></i> RSVP · web-slinger style
+      </div>
+      <div class="rsvp-form" id="rsvpForm">
+        <input type="text" id="guestName" placeholder="Your name (e.g. Miles)" required>
+        <div class="row-duo">
+          <input type="text" id="plusOne" placeholder="Plus one? (optional)">
+          <input type="number" id="guestCount" placeholder="total" min="1" value="1" style="width:70px;">
         </div>
-        <div class="plus-one-group">
-          <label><i class="fas fa-user-plus"></i> Plus one? <input type="checkbox" id="plusOneCheck"></label>
-          <input type="text" id="plusOneName" placeholder="Guest name" style="flex:1; min-width:140px; padding:10px 14px; border-radius:60px; border:2px solid #cc2233; background:#f0f5fc;">
+        <button id="rsvpSubmitBtn"><i class="fas fa-check-circle"></i> SAVE RSVP</button>
+      </div>
+      <div style="font-size:0.8rem; text-align:center; color:#1f3a4b; margin-top:6px;"><i class="fas fa-save"></i> saved online · download below</div>
+    </div>
+
+    <!-- RSVP LIST with password reveal (password = 1234) -->
+    <div class="rsvp-list-area">
+      <div class="rsvp-toggle">
+        <span style="font-size:0.8rem; opacity:0.8;"><i class="fas fa-user-friends"></i> guest list</span>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input type="password" id="passwordInput" placeholder="password" class="rsvp-password-input" value="1234">
+          <i class="fas fa-lock" id="toggleListIcon" style="font-size:1.6rem; padding:2px 12px;"></i>
         </div>
-        <div class="rsvp-actions">
-          <button class="btn-rsvp" id="rsvpSubmitBtn"><i class="fas fa-check-circle"></i> RSVP</button>
-          <button class="btn-download" id="downloadBtn"><i class="fas fa-file-download"></i> Download web-list</button>
-        </div>
-        <div id="rsvpFeedback" class="rsvp-response"><i class="fas fa-smile"></i> RSVP saved online</div>
+      </div>
+      <div class="rsvp-list-hidden" id="rsvpListContainer">
+        <ul id="rsvpListUl">
+          <li><span>Kayden Elija</span> <span class="badge-plus">+1</span></li>
+          <li><span>Miles Morales</span> <span class="badge-plus">+0</span></li>
+          <li><span>Gwen Stacy</span> <span class="badge-plus">+1</span></li>
+        </ul>
+        <button class="download-btn" id="downloadRsvpBtn"><i class="fas fa-download"></i> Download RSVP list (.txt)</button>
+        <div style="font-size:0.7rem; text-align:center; color:#bbb; margin-top:4px;">password: 1234</div>
       </div>
     </div>
-    <div class="footnote"><i class="fas fa-cloud-upload-alt"></i> responses stored locally · download anytime</div>
   </div>
 </div>
 
 <script>
   (function() {
-    const pageMail = document.getElementById('pageMail');
-    const pageParty = document.getElementById('pageParty');
+    // ---- Spider-Web Canvas Effect ----
+    const canvas = document.getElementById('webCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
 
-    const cdDays = document.getElementById('cdDays');
-    const cdHours = document.getElementById('cdHours');
-    const cdMinutes = document.getElementById('cdMinutes');
-    const cdSeconds = document.getElementById('cdSeconds');
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      width = canvas.width;
+      height = canvas.height;
+      drawWeb();
+    }
 
-    const guestName = document.getElementById('guestName');
-    const plusOneCheck = document.getElementById('plusOneCheck');
-    const plusOneName = document.getElementById('plusOneName');
-    const rsvpSubmitBtn = document.getElementById('rsvpSubmitBtn');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const rsvpFeedback = document.getElementById('rsvpFeedback');
+    function drawWeb() {
+      if (!width || !height) return;
+      ctx.clearRect(0, 0, width, height);
+      
+      // draw spider web lines
+      const centerX = width * 0.5;
+      const centerY = height * 0.45;
+      const maxRadius = Math.min(width, height) * 0.6;
+      
+      // radial lines (spokes)
+      const spokes = 12;
+      for (let i = 0; i < spokes; i++) {
+        const angle = (i / spokes) * Math.PI * 2 + Math.PI / 6;
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        const endX = centerX + Math.cos(angle) * maxRadius;
+        const endY = centerY + Math.sin(angle) * maxRadius;
+        ctx.lineTo(endX, endY);
+        ctx.strokeStyle = 'rgba(180, 40, 40, 0.3)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
 
-    // --- toggle pages ---
-    pageMail.addEventListener('click', function(e) {
-      pageMail.classList.add('hidden-page');
-      pageParty.classList.remove('hidden-page');
-      updateCountdown();
+      // concentric circles with slight distortion (web)
+      const rings = 7;
+      for (let r = 1; r <= rings; r++) {
+        const radius = (r / rings) * maxRadius * 0.9;
+        ctx.beginPath();
+        // make it slightly wobbly
+        const steps = 40;
+        for (let j = 0; j <= steps; j++) {
+          const t = j / steps;
+          const angle = t * Math.PI * 2;
+          const wobble = 1 + 0.08 * Math.sin(angle * 5 + r * 0.7);
+          const x = centerX + Math.cos(angle) * radius * wobble;
+          const y = centerY + Math.sin(angle) * radius * wobble;
+          if (j === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = `rgba(150, 30, 30, ${0.15 + r * 0.03})`;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      }
+
+      // small spider silhouette in corner
+      ctx.fillStyle = 'rgba(30, 30, 30, 0.15)';
+      ctx.beginPath();
+      const sx = width * 0.85, sy = height * 0.15;
+      // body
+      ctx.arc(sx, sy, 8, 0, Math.PI * 2);
+      ctx.fill();
+      // legs
+      ctx.strokeStyle = 'rgba(30, 30, 30, 0.15)';
+      ctx.lineWidth = 2;
+      for (let leg = 0; leg < 8; leg++) {
+        const angle = (leg / 8) * Math.PI * 2 + 0.2;
+        const legLen = 14;
+        ctx.beginPath();
+        ctx.moveTo(sx + Math.cos(angle) * 6, sy + Math.sin(angle) * 6);
+        ctx.lineTo(sx + Math.cos(angle) * legLen, sy + Math.sin(angle) * legLen);
+        ctx.stroke();
+      }
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    // initial draw after layout
+    setTimeout(resizeCanvas, 50);
+    // also redraw on orientation change
+    window.addEventListener('orientationchange', function() {
+      setTimeout(resizeCanvas, 300);
     });
 
-    // --- countdown (Manila time) ---
-    const targetDate = new Date('2026-11-15T15:00:00+08:00');
+    // ---- Envelope click ----
+    const envelopePage = document.getElementById('envelopePage');
+    const invitePage = document.getElementById('invitePage');
+    const countdownDisplay = document.getElementById('countdownDisplay');
+
+    envelopePage.addEventListener('click', function(e) {
+      envelopePage.classList.add('hidden');
+      invitePage.classList.add('active');
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    });
+
+    // ---- Countdown to NOV 15, 2026 3PM (Philippines) ----
     function updateCountdown() {
+      const target = new Date('2026-11-15T15:00:00+08:00');
       const now = new Date();
-      const diff = Math.max(0, targetDate - now);
-      const days = Math.floor(diff / (1000*60*60*24));
-      const hours = Math.floor((diff / (1000*60*60)) % 24);
-      const minutes = Math.floor((diff / (1000*60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-      cdDays.textContent = String(days).padStart(2,'0');
-      cdHours.textContent = String(hours).padStart(2,'0');
-      cdMinutes.textContent = String(minutes).padStart(2,'0');
-      cdSeconds.textContent = String(seconds).padStart(2,'0');
+      const diff = Math.max(0, target - now);
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const mins = Math.floor((diff / (1000 * 60)) % 60);
+      countdownDisplay.textContent = 
+        `${String(days).padStart(2, '0')}d ${String(hours).padStart(2, '0')}h ${String(mins).padStart(2, '0')}m`;
     }
     updateCountdown();
-    setInterval(updateCountdown, 1000);
 
-    // --- RSVP storage (localStorage) ---
-    function getRsvpList() {
-      const stored = localStorage.getItem('kayden_rsvp_list');
-      try { return stored ? JSON.parse(stored) : []; } catch(e) { return []; }
-    }
-    function saveRsvpList(list) {
-      localStorage.setItem('kayden_rsvp_list', JSON.stringify(list));
-    }
-    function addRsvp(name, plusOne) {
-      const list = getRsvpList();
-      list.push({ name: name.trim(), plusOne: plusOne || null, timestamp: new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila' }) });
-      saveRsvpList(list);
-      return list;
-    }
-    function showFeedback(msg, isError = false) {
-      rsvpFeedback.innerHTML = msg;
-      rsvpFeedback.style.background = isError ? '#6b3f3a' : '#1a2d3f';
-      rsvpFeedback.style.color = '#f0f5fc';
-      setTimeout(() => {
-        rsvpFeedback.style.background = '#1a2d3f';
-        rsvpFeedback.innerHTML = '<i class="fas fa-smile"></i> RSVP saved (local)';
-      }, 4200);
-    }
+    // ---- RSVP data ----
+    let rsvpEntries = [
+      { name: 'Kayden Elija', plus: '1' },
+      { name: 'Miles Morales', plus: '0' },
+      { name: 'Gwen Stacy', plus: '1' }
+    ];
 
-    rsvpSubmitBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      const name = guestName.value.trim();
-      if (!name) { showFeedback('⚠️ Enter your hero name.', true); return; }
-      let plusOneVal = null;
-      if (plusOneCheck.checked) {
-        const pName = plusOneName.value.trim();
-        if (!pName) { showFeedback('⚠️ Enter plus-one name or uncheck.', true); return; }
-        plusOneVal = pName;
-      }
-      addRsvp(name, plusOneVal);
-      showFeedback(`✅ ${name} RSVP'd${plusOneVal ? ' with +1: '+plusOneVal : ''}!`);
-      guestName.value = '';
-      plusOneName.value = '';
-      plusOneCheck.checked = false;
-    });
-
-    downloadBtn.addEventListener('click', function() {
-      const list = getRsvpList();
-      if (list.length === 0) { showFeedback('📭 No RSVPs yet.', true); return; }
-      let content = '🕷️ Kayden Elija · Spider-Man RSVP web-list\n';
-      content += `Downloaded: ${new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila' })}\n`;
-      content += '----------------------------------------\n';
-      list.forEach((item, idx) => {
-        const plus = item.plusOne ? ` + guest: ${item.plusOne}` : '';
-        content += `${idx+1}. ${item.name}${plus}  (${item.timestamp})\n`;
+    function renderRsvpList() {
+      const ul = document.getElementById('rsvpListUl');
+      ul.innerHTML = '';
+      rsvpEntries.forEach(entry => {
+        const li = document.createElement('li');
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = entry.name || 'Guest';
+        const plusSpan = document.createElement('span');
+        plusSpan.className = 'badge-plus';
+        const plusCount = entry.plus ? parseInt(entry.plus) : 0;
+        plusSpan.textContent = '+' + (plusCount > 0 ? plusCount : '0');
+        li.appendChild(nameSpan);
+        li.appendChild(plusSpan);
+        ul.appendChild(li);
       });
-      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `kayden_spiderman_rsvp_${new Date().toISOString().slice(0,10)}.txt`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(link.href);
-      showFeedback('📥 Web-list downloaded!');
+    }
+    renderRsvpList();
+
+    // ---- RSVP submit ----
+    document.getElementById('rsvpSubmitBtn').addEventListener('click', function() {
+      const name = document.getElementById('guestName').value.trim();
+      if (!name) {
+        alert('Please enter your name! (like Spidey)');
+        return;
+      }
+      let plusVal = document.getElementById('plusOne').value.trim();
+      let count = parseInt(document.getElementById('guestCount').value) || 1;
+      if (plusVal === '' && count > 1) {
+        plusVal = (count - 1).toString();
+      } else if (plusVal !== '') {
+        if (count > 1) plusVal = (count).toString();
+        else plusVal = '1';
+      } else {
+        plusVal = '0';
+      }
+      let plusNum = parseInt(plusVal) || 0;
+      rsvpEntries.push({ name: name, plus: plusNum.toString() });
+      renderRsvpList();
+      document.getElementById('guestName').value = '';
+      document.getElementById('plusOne').value = '';
+      document.getElementById('guestCount').value = '1';
+      alert(`✅ Thanks ${name}! You're on the guest list. 🕷️`);
     });
 
-    plusOneCheck.addEventListener('change', function() {
-      if (this.checked) plusOneName.focus();
+    // ---- Password toggle (password = 1234) ----
+    let listVisible = false;
+    const toggleIcon = document.getElementById('toggleListIcon');
+    const passwordInput = document.getElementById('passwordInput');
+    const listContainer = document.getElementById('rsvpListContainer');
+
+    toggleIcon.addEventListener('click', function() {
+      const pwd = passwordInput.value.trim();
+      if (pwd === '1234') {
+        listVisible = !listVisible;
+        if (listVisible) {
+          listContainer.classList.add('open');
+          toggleIcon.innerHTML = '<i class="fas fa-lock-open"></i>';
+          toggleIcon.style.color = '#fdd835';
+        } else {
+          listContainer.classList.remove('open');
+          toggleIcon.innerHTML = '<i class="fas fa-lock"></i>';
+        }
+      } else {
+        alert('🔒 Incorrect password. Hint: 1234');
+      }
     });
+
+    passwordInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') toggleIcon.click();
+    });
+
+    // ---- Download RSVP list ----
+    document.getElementById('downloadRsvpBtn').addEventListener('click', function() {
+      let content = '🕷️ KAYDEN ELIJA · RSVP LIST\n';
+      content += '=========================\n';
+      rsvpEntries.forEach((entry, idx) => {
+        const plus = entry.plus ? parseInt(entry.plus) : 0;
+        content += `${idx+1}. ${entry.name}  ( +${plus} )\n`;
+      });
+      content += '\n--- Ilocos, PH · Nov 15, 2026 ---';
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Kayden_Elija_RSVP_list.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    // plusOne hint
+    document.getElementById('guestCount').addEventListener('change', function() {
+      const val = parseInt(this.value) || 1;
+      const plusInput = document.getElementById('plusOne');
+      if (val > 1 && !plusInput.value) {
+        plusInput.placeholder = `+${val-1} guest(s)`;
+      } else {
+        plusInput.placeholder = 'Plus one? (optional)';
+      }
+    });
+
   })();
 </script>
 </body>
