@@ -78,7 +78,7 @@
     }
 
     .envelope-icon {
-      font-size: 120px;
+      font-size: 100px;
       color: #c62828;
       filter: drop-shadow(0 8px 12px rgba(0,0,0,0.2));
       animation: float 2.5s ease-in-out infinite;
@@ -92,13 +92,60 @@
       box-shadow: inset 0 -4px 0 #b71c1c;
     }
 
+    /* ----- SLOGAN ----- */
+    .slogan {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #b71c1c;
+      text-shadow: 2px 2px 0 #fdd835, 4px 4px 0 rgba(0,0,0,0.1);
+      margin-top: 8px;
+      letter-spacing: 1px;
+      background: rgba(255,215,0,0.15);
+      padding: 6px 20px;
+      border-radius: 40px;
+      border: 2px dashed #b71c1c;
+    }
+
+    .slogan i {
+      color: #b71c1c;
+      margin: 0 4px;
+    }
+
+    /* ----- COUNTDOWN ON PAGE 1 ----- */
+    .envelope-countdown {
+      margin-top: 14px;
+      background: rgba(11, 26, 46, 0.85);
+      padding: 10px 18px;
+      border-radius: 50px;
+      border: 2px solid #fdd835;
+      backdrop-filter: blur(4px);
+      min-width: 200px;
+    }
+
+    .envelope-countdown .timer {
+      font-size: 1.6rem;
+      font-weight: 800;
+      font-family: 'Courier New', monospace;
+      color: #fdd835;
+      letter-spacing: 3px;
+      text-shadow: 0 0 10px rgba(253, 216, 53, 0.3);
+    }
+
+    .envelope-countdown .label {
+      font-size: 0.65rem;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 600;
+    }
+
     .envelope-text {
-      margin-top: 18px;
+      margin-top: 10px;
       background: #b71c1c;
       color: white;
-      padding: 12px 24px;
+      padding: 10px 24px;
       border-radius: 60px;
-      font-size: 1.6rem;
+      font-size: 1.4rem;
       font-weight: 700;
       letter-spacing: 2px;
       box-shadow: 0 6px 0 #7f0000;
@@ -107,22 +154,22 @@
     }
 
     .envelope-sub {
-      margin-top: 12px;
+      margin-top: 8px;
       color: #1f3a4b;
       background: rgba(255,215,0,0.3);
-      padding: 6px 20px;
+      padding: 4px 20px;
       border-radius: 30px;
-      font-size: 1rem;
+      font-size: 0.9rem;
       font-weight: 600;
       backdrop-filter: blur(2px);
     }
 
     .click-hint {
-      margin-top: 20px;
-      font-size: 0.9rem;
+      margin-top: 14px;
+      font-size: 0.85rem;
       background: #2e2e2e;
       color: #ffd966;
-      padding: 8px 22px;
+      padding: 6px 20px;
       border-radius: 40px;
       animation: pulse 1.8s infinite;
       border: 2px solid #fdd835;
@@ -528,7 +575,10 @@
     }
 
     @media (max-width: 450px) {
-      .envelope-icon { font-size: 80px; }
+      .envelope-icon { font-size: 70px; }
+      .slogan { font-size: 1.1rem; padding: 4px 14px; }
+      .envelope-countdown .timer { font-size: 1.2rem; }
+      .envelope-text { font-size: 1.1rem; padding: 8px 16px; }
       .countdown-timer { font-size: 1.8rem; }
       .party-detail-row { font-size: 0.9rem; flex-wrap: wrap; }
       .party-detail-row .label { min-width: 55px; }
@@ -556,16 +606,28 @@
 
 <div class="invite-card" id="inviteCard">
 
-  <!-- PAGE 1: ENVELOPE with Spider-Web Canvas -->
+  <!-- PAGE 1: ENVELOPE with SLOGAN & COUNTDOWN -->
   <div class="page-envelope" id="envelopePage">
     <canvas id="webCanvas"></canvas>
     <div class="envelope-icon">
       <i class="fas fa-envelope-open-text"></i>
     </div>
-    <div class="envelope-text">🕷️ YOU ARE INVITED! 🕷️</div>
-    <div class="envelope-sub"><i class="fas fa-birthday-cake"></i> · KAYDEN ELIJA'S · BIRTH DAY</div>
+    
+    <!-- FUN SLOGAN -->
+    <div class="slogan">
+      <i class="fas fa-spider"></i> With Great Birthdays <br>Come Great Parties! <i class="fas fa-birthday-cake"></i>
+    </div>
+
+    <!-- COUNTDOWN WITH SECONDS -->
+    <div class="envelope-countdown">
+      <div class="timer" id="envelopeCountdown">--d --h --m --s</div>
+      <div class="label">🕷️ until the web-slinging celebration!</div>
+    </div>
+
+    <div class="envelope-text">🕷️ KAYDEN ELLIJAH 🕷️</div>
+    <div class="envelope-sub"><i class="fas fa-birthday-cake"></i> · BRAND NEW DAY · <i class="fas fa-mask"></i></div>
     <div class="click-hint"><i class="fas fa-hand-pointer"></i> tap anywhere to open</div>
-    <div style="margin-top: 12px; font-size: 0.8rem; color:#5a3e2b;"><i class="fas fa-map-pin"></i> Ilocos, PH</div>
+    <div style="margin-top: 8px; font-size: 0.75rem; color:#5a3e2b;"><i class="fas fa-map-pin"></i> Ilocos, PH</div>
   </div>
 
   <!-- PAGE 2: INVITATION DETAILS + RSVP -->
@@ -729,42 +791,42 @@
     const envelopePage = document.getElementById('envelopePage');
     const invitePage = document.getElementById('invitePage');
     const countdownDisplay = document.getElementById('countdownDisplay');
+    const envelopeCountdown = document.getElementById('envelopeCountdown');
 
     envelopePage.addEventListener('click', function(e) {
       envelopePage.classList.add('hidden');
       invitePage.classList.add('active');
-      updateCountdown();
-      setInterval(updateCountdown, 1000);
+      updateCountdowns();
+      setInterval(updateCountdowns, 1000);
       // Load RSVPs from Google Form when page opens
       loadRsvpFromGoogle();
     });
 
-    // ---- Countdown to NOV 15, 2026 3PM (Philippines) ----
-    function updateCountdown() {
+    // ---- Countdown to NOV 15, 2026 3PM (Philippines) with SECONDS ----
+    function updateCountdowns() {
       const target = new Date('2026-11-15T15:00:00+08:00');
       const now = new Date();
       const diff = Math.max(0, target - now);
+      
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
       const mins = Math.floor((diff / (1000 * 60)) % 60);
+      const secs = Math.floor((diff / 1000) % 60);
+      
+      // Page 1 countdown (with seconds)
+      envelopeCountdown.textContent = 
+        `${String(days).padStart(2, '0')}d ${String(hours).padStart(2, '0')}h ${String(mins).padStart(2, '0')}m ${String(secs).padStart(2, '0')}s`;
+      
+      // Page 2 countdown (without seconds, more concise)
       countdownDisplay.textContent = 
         `${String(days).padStart(2, '0')}d ${String(hours).padStart(2, '0')}h ${String(mins).padStart(2, '0')}m`;
     }
-    updateCountdown();
+    updateCountdowns();
 
     // ---- RSVP data ----
     let rsvpEntries = [];
 
-    // ---- Load RSVPs from Google Form ----
-    // Google Form response URL (replace with your own)
-    const GOOGLE_FORM_RESPONSE_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfahKmju9lSlnkwJDH4IrNy1GYsANR9s6HXM1zddFlsL6Vs4A/viewform?usp=pp_url';
-    // For fetching responses, we need a different approach since Google Forms doesn't have a public API
-    // We'll use a proxy or manual entry for demo purposes
-    
-    // For demo, we'll use localStorage to persist RSVPs
-    // In production, you'd use a proper backend or Google Apps Script
     function loadRsvpFromGoogle() {
-      // Try to load from localStorage first
       try {
         const stored = localStorage.getItem('spidey_rsvp_entries');
         if (stored) {
@@ -776,7 +838,6 @@
         console.warn('Failed to load from localStorage');
       }
       
-      // Default entries if nothing is stored
       rsvpEntries = [
         { name: 'Kayden Elija', plus: '1', plusName: 'MJ' },
         { name: 'Miles Morales', plus: '0', plusName: '' },
@@ -851,15 +912,10 @@
       const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfahKmju9lSlnkwJDH4IrNy1GYsANR9s6HXM1zddFlsL6Vs4A/formResponse';
       const formData = new URLSearchParams();
 
-      // Google Form fields:
-      // entry.1789997178 = Your name
-      // entry.978997940 = Plus one name
-      // entry.1999140148 = Plus one? Yes/No
       formData.append('entry.1789997178', name);
       formData.append('entry.978997940', plusOneName);
       formData.append('entry.1999140148', plusOne);
 
-      // Show loading state
       const submitBtn = document.getElementById('rsvpSubmitBtn');
       const originalText = submitBtn.innerHTML;
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
@@ -870,7 +926,6 @@
         mode: 'no-cors',
         body: formData
       }).then(() => {
-        // Add to local list
         rsvpEntries.push({
           name: name,
           plus: plusOne === 'Yes' ? 1 : 0,
@@ -888,7 +943,6 @@
 
         alert(`✅ Thanks ${name}! Your RSVP was saved online. 🕷️`);
       }).catch(() => {
-        // Even if fetch fails, save locally
         rsvpEntries.push({
           name: name,
           plus: plusOne === 'Yes' ? 1 : 0,
@@ -939,7 +993,6 @@
           listContainer.classList.add('open');
           toggleIcon.innerHTML = '<i class="fas fa-lock-open"></i>';
           toggleIcon.style.color = '#fdd835';
-          // Refresh list when opening
           loadRsvpFromGoogle();
         } else {
           listContainer.classList.remove('open');
@@ -953,10 +1006,8 @@
       }
     }
 
-    // Click on guest list area to open modal
     guestListToggle.addEventListener('click', function() {
       if (listVisible) {
-        // If already unlocked, just toggle close
         listVisible = false;
         listContainer.classList.remove('open');
         toggleIcon.innerHTML = '<i class="fas fa-lock"></i>';
@@ -965,13 +1016,9 @@
       }
     });
 
-    // Modal unlock button
     modalUnlockBtn.addEventListener('click', unlockGuestList);
-
-    // Modal cancel button
     modalCancelBtn.addEventListener('click', closeModal);
 
-    // Enter key on password input
     modalPasswordInput.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -979,7 +1026,6 @@
       }
     });
 
-    // Click outside modal to close
     passwordModal.addEventListener('click', function(e) {
       if (e.target === passwordModal) {
         closeModal();
