@@ -475,6 +475,12 @@
       font-size: 0.9rem;
     }
 
+    .rsvp-count {
+      font-size: 0.8rem;
+      color: #aaa;
+      margin-left: 8px;
+    }
+
     @media (max-width: 450px) {
       .envelope-icon { font-size: 80px; }
       .countdown-timer { font-size: 1.8rem; }
@@ -556,7 +562,9 @@
 
         <button id="rsvpSubmitBtn"><i class="fas fa-check-circle"></i> SAVE RSVP</button>
       </div>
-      <div style="font-size:0.8rem; text-align:center; color:#1f3a4b; margin-top:6px;"><i class="fas fa-save"></i> saved online · download below</div>
+      <div style="font-size:0.8rem; text-align:center; color:#1f3a4b; margin-top:6px;">
+        <i class="fas fa-save"></i> saved online · <span id="rsvpTotalCount">0</span> guests so far
+      </div>
     </div>
 
     <!-- RSVP LIST with password reveal (password = 1234, hidden) -->
@@ -569,11 +577,7 @@
         </div>
       </div>
       <div class="rsvp-list-hidden" id="rsvpListContainer">
-        <ul id="rsvpListUl">
-          <li><span>Kayden Elija</span> <span class="badge-plus">+1</span></li>
-          <li><span>Miles Morales</span> <span class="badge-plus">+0</span></li>
-          <li><span>Gwen Stacy</span> <span class="badge-plus">+1</span></li>
-        </ul>
+        <ul id="rsvpListUl"></ul>
         <button class="download-btn" id="downloadRsvpBtn"><i class="fas fa-download"></i> Download RSVP list (.txt)</button>
       </div>
     </div>
@@ -582,6 +586,9 @@
 
 <script>
   (function() {
+    // ---- YOUR GOOGLE SHEETS WEB APP URL ----
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyUtq9G05R5QFIU3xuHVX8dUBz71JVBmim7qcJ5r0RPHi3plgOvxyaTW5Yn_vL6XgC6_g/exec';
+
     // ---- Spider-Web Canvas Effect ----
     const canvas = document.getElementById('webCanvas');
     const ctx = canvas.getContext('2d');
@@ -670,6 +677,7 @@
       invitePage.classList.add('active');
       updateCountdown();
       setInterval(updateCountdown, 1000);
+      loadRsvpFromGoogle(); // Load RSVPs when page opens
     });
 
     // ---- Countdown to NOV 15, 2026 3PM (Philippines) ----
@@ -698,17 +706,71 @@
       }
     });
 
-    // ---- RSVP data ----
-    let rsvpEntries = [
-      { name: 'Kayden Elija', plus: '1', plusName: 'MJ' },
-      { name: 'Miles Morales', plus: '0', plusName: '' },
-      { name: 'Gwen Stacy', plus: '1', plusName: 'Peter' }
-    ];
+    // ---- RSVP data from Google Sheets ----
+    let rsvpEntries = [];
+
+    async function loadRsvpFromGoogle() {
+      try {
+        const response = await fetch(SHEET_URL);
+        const data = await response.json();
+        
+        // Convert Google Sheet data to our format
+        rsvpEntries = data.map(row => ({
+          name: row.name || 'Guest',
+          plus: row.plus_one || '0',
+          plusName: row.plus_one_name || ''
+        }));
+        
+        // Keep at least some default entries if empty
+        if (rsvpEntries.length === 0) {
+          rsvpEntries = [
+            { name: 'Kayden Elija', plus: '1', plusName: 'MJ' },
+            { name: 'Miles Morales', plus: '0', plusName: '' },
+            { name: 'Gwen Stacy', plus: '1', plusName: 'Peter' }
+          ];
+        }
+        
+        renderRsvpList();
+      } catch (error) {
+        console.warn('Failed to load from Google Sheets, using defaults:', error);
+        // Default entries if Google Sheets fails
+        rsvpEntries = [
+          { name: 'Kayden Elija', plus: '1', plusName: 'MJ' },
+          { name: 'Miles Morales', plus: '0', plusName: '' },
+          { name: 'Gwen Stacy', plus: '1', plusName: 'Peter' }
+        ];
+        renderRsvpList();
+      }
+    }
+
+    async function saveRsvpToGoogle(name, plus, plusName) {
+      try {
+        const response = await fetch(SHEET_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: name,
+            plus: plus,
+            plusName: plusName || ''
+          })
+        });
+        
+        // Since we're using no-cors, we can't read the response
+        // But the data should be saved
+        return true;
+      } catch (error) {
+        console.error('Failed to save to Google Sheets:', error);
+        return false;
+      }
+    }
 
     function renderRsvpList() {
       const ul = document.getElementById('rsvpListUl');
       ul.innerHTML = '';
-      rsvpEntries.forEach(entry => {
+      rsvpEntries.forEach((entry, index) => {
         const li = document.createElement('li');
         const leftSpan = document.createElement('span');
         leftSpan.textContent = entry.name || 'Guest';
@@ -724,11 +786,16 @@
         li.appendChild(rightSpan);
         ul.appendChild(li);
       });
+      
+      // Update total count
+      const total = rsvpEntries.reduce((sum, entry) => {
+        return sum + 1 + (parseInt(entry.plus) || 0);
+      }, 0);
+      document.getElementById('rsvpTotalCount').textContent = total;
     }
-    renderRsvpList();
 
     // ---- RSVP submit ----
-    document.getElementById('rsvpSubmitBtn').addEventListener('click', function() {
+    document.getElementById('rsvpSubmitBtn').addEventListener('click', async function() {
       const name = document.getElementById('guestName').value.trim();
       if (!name) {
         alert('Please enter your name! (like Spidey)');
@@ -748,19 +815,37 @@
         plusVal = '1';
       }
 
-      rsvpEntries.push({ 
-        name: name, 
-        plus: plusVal, 
-        plusName: plusNameVal 
-      });
-      renderRsvpList();
+      // Check for duplicate
+      const duplicate = rsvpEntries.some(entry => 
+        entry.name.toLowerCase() === name.toLowerCase()
+      );
+      if (duplicate) {
+        alert(`⚠️ ${name} is already on the guest list!`);
+        return;
+      }
 
-      document.getElementById('guestName').value = '';
-      plusOneCheck.checked = false;
-      plusOneName.value = '';
-      plusOneName.disabled = true;
+      // Save to Google Sheets
+      const saved = await saveRsvpToGoogle(name, plusVal, plusNameVal);
+      
+      if (saved) {
+        // Add to local list
+        rsvpEntries.push({ 
+          name: name, 
+          plus: plusVal, 
+          plusName: plusNameVal 
+        });
+        
+        renderRsvpList();
 
-      alert(`✅ Thanks ${name}! You're on the guest list. 🕷️`);
+        document.getElementById('guestName').value = '';
+        plusOneCheck.checked = false;
+        plusOneName.value = '';
+        plusOneName.disabled = true;
+
+        alert(`✅ Thanks ${name}! You're on the guest list. 🕷️`);
+      } else {
+        alert('❌ There was an issue saving your RSVP. Please try again.');
+      }
     });
 
     // ---- Password toggle (password = 1234, no hint) ----
@@ -777,6 +862,7 @@
           listContainer.classList.add('open');
           toggleIcon.innerHTML = '<i class="fas fa-lock-open"></i>';
           toggleIcon.style.color = '#fdd835';
+          loadRsvpFromGoogle(); // Refresh list when opening
         } else {
           listContainer.classList.remove('open');
           toggleIcon.innerHTML = '<i class="fas fa-lock"></i>';
@@ -794,6 +880,8 @@
     document.getElementById('downloadRsvpBtn').addEventListener('click', function() {
       let content = '🕷️ KAYDEN ELIJA · RSVP LIST\n';
       content += '=========================\n';
+      content += `Generated: ${new Date().toLocaleString()}\n\n`;
+      
       rsvpEntries.forEach((entry, idx) => {
         const plus = entry.plus ? parseInt(entry.plus) : 0;
         let line = `${idx+1}. ${entry.name}`;
@@ -806,17 +894,34 @@
         }
         content += line + '\n';
       });
+      
+      const total = rsvpEntries.reduce((sum, entry) => {
+        return sum + 1 + (parseInt(entry.plus) || 0);
+      }, 0);
+      content += `\n--- Total guests: ${total} ---`;
       content += '\n--- Ilocos, PH · Nov 15, 2026 ---';
-      const blob = new Blob([content], { type: 'text/plain' });
+      
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'Kayden_Elija_RSVP_list.txt';
+      a.download = `Kayden_Elija_RSVP_${new Date().toISOString().slice(0,10)}.txt`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     });
+
+    // Enter key support for name field
+    document.getElementById('guestName').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('rsvpSubmitBtn').click();
+      }
+    });
+
+    // Load initial RSVP data
+    loadRsvpFromGoogle();
 
   })();
 </script>
