@@ -463,8 +463,12 @@
       <div class="rsvp-form" id="rsvpForm">
         <input type="text" id="guestName" placeholder="Your name (e.g. Miles)" required>
         <div class="row-duo">
-          <input type="text" id="plusOne" placeholder="Plus one? (optional)">
-          <input type="text" id="guestCount" placeholder="Plus one name" style="width:160px;">
+          <input type="text" id="plusOneName" placeholder="Plus one name" style="width:160px;">
+          <select id="plusOne" aria-label="Plus one? (optional)" required>
+            <option value="" selected disabled>Plus one? (optional)</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
         </div>
         <button id="rsvpSubmitBtn"><i class="fas fa-check-circle"></i> SAVE RSVP</button>
       </div>
@@ -628,20 +632,35 @@
     // ---- RSVP submit ----
     document.getElementById('rsvpSubmitBtn').addEventListener('click', function() {
       const name = document.getElementById('guestName').value.trim();
+      const plusOneName = document.getElementById('plusOneName').value.trim();
+      const plusOne = document.getElementById('plusOne').value;
+
       if (!name) {
         alert('Please enter your name! (like Spidey)');
         return;
       }
 
-      const plusOne = document.getElementById('plusOne').value.trim();
-      const plusOneName = document.getElementById('guestCount').value.trim();
+      if (!plusOne) {
+        alert('Please select Yes or No for Plus one.');
+        return;
+      }
 
-      // Google Forms submission
+      if (plusOne === 'Yes' && !plusOneName) {
+        alert('Please enter your Plus one name.');
+        return;
+      }
+
+      // Google Form submission
       const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfahKmju9lSlnkwJDH4IrNy1GYsANR9s6HXM1zddFlsL6Vs4A/formResponse';
       const formData = new URLSearchParams();
+
+      // Google Form fields in the requested order:
+      // entry.1789997178 = Your name
+      // entry.978997940 = Plus one name
+      // entry.1999140148 = Plus one? Yes/No
       formData.append('entry.1789997178', name);
-      formData.append('entry.978997940', plusOne);
-      formData.append('entry.1999140148', plusOneName);
+      formData.append('entry.978997940', plusOneName);
+      formData.append('entry.1999140148', plusOne);
 
       fetch(formUrl, {
         method: 'POST',
@@ -650,13 +669,16 @@
       }).then(() => {
         rsvpEntries.push({
           name: name,
-          plus: plusOneName ? 1 : (plusOne ? 1 : 0),
-          plusName: plusOneName
+          plus: plusOne === 'Yes' ? 1 : 0,
+          plusName: plusOne === 'Yes' ? plusOneName : ''
         });
+
         renderRsvpList();
+
         document.getElementById('guestName').value = '';
+        document.getElementById('plusOneName').value = '';
         document.getElementById('plusOne').value = '';
-        document.getElementById('guestCount').value = '';
+
         alert(`✅ Thanks ${name}! Your RSVP was saved online. 🕷️`);
       }).catch(() => {
         alert('⚠️ We could not submit your RSVP. Please try again.');
@@ -709,8 +731,6 @@
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     });
-
-    // Plus-one name field is now a text field; no guest-count logic needed.
 
 
   })();
