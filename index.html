@@ -23,7 +23,6 @@
       padding: 16px;
     }
 
-    /* main card */
     .invite-card {
       max-width: 500px;
       width: 100%;
@@ -56,7 +55,6 @@
       z-index: 1;
     }
 
-    /* Spider-Web Background (canvas) */
     #webCanvas {
       position: absolute;
       top: 0;
@@ -473,12 +471,12 @@
       <div style="font-size:0.8rem; text-align:center; color:#1f3a4b; margin-top:6px;"><i class="fas fa-save"></i> saved online · download below</div>
     </div>
 
-    <!-- RSVP LIST with password reveal (password = 1234) -->
+    <!-- RSVP LIST with password reveal (password = 1234, hidden) -->
     <div class="rsvp-list-area">
       <div class="rsvp-toggle">
         <span style="font-size:0.8rem; opacity:0.8;"><i class="fas fa-user-friends"></i> guest list</span>
         <div style="display:flex; gap:8px; align-items:center;">
-          <input type="password" id="passwordInput" placeholder="password" class="rsvp-password-input" value="1234">
+          <input type="password" id="passwordInput" placeholder="password" class="rsvp-password-input">
           <i class="fas fa-lock" id="toggleListIcon" style="font-size:1.6rem; padding:2px 12px;"></i>
         </div>
       </div>
@@ -489,7 +487,6 @@
           <li><span>Gwen Stacy</span> <span class="badge-plus">+1</span></li>
         </ul>
         <button class="download-btn" id="downloadRsvpBtn"><i class="fas fa-download"></i> Download RSVP list (.txt)</button>
-        <div style="font-size:0.7rem; text-align:center; color:#bbb; margin-top:4px;">password: 1234</div>
       </div>
     </div>
   </div>
@@ -515,7 +512,6 @@
       if (!width || !height) return;
       ctx.clearRect(0, 0, width, height);
       
-      // draw spider web lines
       const centerX = width * 0.5;
       const centerY = height * 0.45;
       const maxRadius = Math.min(width, height) * 0.6;
@@ -539,7 +535,6 @@
       for (let r = 1; r <= rings; r++) {
         const radius = (r / rings) * maxRadius * 0.9;
         ctx.beginPath();
-        // make it slightly wobbly
         const steps = 40;
         for (let j = 0; j <= steps; j++) {
           const t = j / steps;
@@ -560,10 +555,8 @@
       ctx.fillStyle = 'rgba(30, 30, 30, 0.15)';
       ctx.beginPath();
       const sx = width * 0.85, sy = height * 0.15;
-      // body
       ctx.arc(sx, sy, 8, 0, Math.PI * 2);
       ctx.fill();
-      // legs
       ctx.strokeStyle = 'rgba(30, 30, 30, 0.15)';
       ctx.lineWidth = 2;
       for (let leg = 0; leg < 8; leg++) {
@@ -577,9 +570,7 @@
     }
 
     window.addEventListener('resize', resizeCanvas);
-    // initial draw after layout
     setTimeout(resizeCanvas, 50);
-    // also redraw on orientation change
     window.addEventListener('orientationchange', function() {
       setTimeout(resizeCanvas, 300);
     });
@@ -660,7 +651,7 @@
       alert(`✅ Thanks ${name}! You're on the guest list. 🕷️`);
     });
 
-    // ---- Password toggle (password = 1234) ----
+    // ---- Password toggle (password = 1234, no hint) ----
     let listVisible = false;
     const toggleIcon = document.getElementById('toggleListIcon');
     const passwordInput = document.getElementById('passwordInput');
@@ -679,7 +670,7 @@
           toggleIcon.innerHTML = '<i class="fas fa-lock"></i>';
         }
       } else {
-        alert('🔒 Incorrect password. Hint: 1234');
+        alert('🔒 Incorrect password.');
       }
     });
 
