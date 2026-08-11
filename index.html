@@ -463,12 +463,8 @@
       <div class="rsvp-form" id="rsvpForm">
         <input type="text" id="guestName" placeholder="Your name (e.g. Miles)" required>
         <div class="row-duo">
-          <select id="plusOne" aria-label="Plus one?">
-            <option value="" selected disabled>Plus one? (optional)</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-          </select>
-          <input type="text" id="plusOneName" placeholder="Plus one name" style="width:160px;" disabled>
+          <input type="text" id="plusOne" placeholder="Plus one? (optional)">
+          <input type="text" id="guestCount" placeholder="Plus one name" style="width:160px;">
         </div>
         <button id="rsvpSubmitBtn"><i class="fas fa-check-circle"></i> SAVE RSVP</button>
       </div>
@@ -630,84 +626,22 @@
     renderRsvpList();
 
     // ---- RSVP submit ----
-    document.getElementById('plusOne').addEventListener('change', function() {
-      const plusOneNameInput = document.getElementById('plusOneName');
-      if (this.value === 'Yes') {
-        plusOneNameInput.disabled = false;
-        plusOneNameInput.required = true;
-        plusOneNameInput.placeholder = 'Plus one name';
-        plusOneNameInput.focus();
-      } else {
-        plusOneNameInput.disabled = true;
-        plusOneNameInput.required = false;
-        plusOneNameInput.value = '';
-        plusOneNameInput.placeholder = 'Plus one name';
-      }
-    });
-
-    // Hidden iframe prevents Google Forms navigation while submitting.
-    if (!document.getElementById('googleFormSubmitFrame')) {
-      const submitFrame = document.createElement('iframe');
-      submitFrame.name = 'googleFormSubmitFrame';
-      submitFrame.id = 'googleFormSubmitFrame';
-      submitFrame.style.display = 'none';
-      document.body.appendChild(submitFrame);
-    }
-
     document.getElementById('rsvpSubmitBtn').addEventListener('click', function() {
       const name = document.getElementById('guestName').value.trim();
-      const plusOne = document.getElementById('plusOne').value;
-      const plusOneName = document.getElementById('plusOneName').value.trim();
-
       if (!name) {
         alert('Please enter your name! (like Spidey)');
         return;
       }
 
-      if (!plusOne) {
-        alert('Please select Yes or No for Plus one.');
-        return;
-      }
-
-      if (plusOne === 'Yes' && !plusOneName) {
-        alert('Please enter your Plus one name.');
-        return;
-      }
+      const plusOne = document.getElementById('plusOne').value.trim();
+      const plusOneName = document.getElementById('guestCount').value.trim();
 
       // Google Forms submission
-      const formUrl = 'https://docs.google.com/forms/d/13rLkObpt1JzQ6fy_pA8y4xzn8ukQLl5pVarn_5npsUY/formResponse';
-      // Hidden Google Form values, in the same order as the questions.
-      const hiddenForm = document.createElement('form');
-      hiddenForm.method = 'POST';
-      hiddenForm.action = 'https://docs.google.com/forms/d/13rLkObpt1JzQ6fy_pA8y4xzn8ukQLl5pVarn_5npsUY/formResponse';
-      hiddenForm.target = 'googleFormSubmitFrame';
-      hiddenForm.style.display = 'none';
-
-      const hiddenName = document.createElement('input');
-      hiddenName.type = 'hidden';
-      hiddenName.name = 'entry.1789997178';
-      hiddenName.value = name;
-      hiddenForm.appendChild(hiddenName);
-
-      const hiddenPlusOne = document.createElement('input');
-      hiddenPlusOne.type = 'hidden';
-      hiddenPlusOne.name = 'entry.978997940';
-      hiddenPlusOne.value = plusOne;
-      hiddenForm.appendChild(hiddenPlusOne);
-
-      const hiddenPlusOneName = document.createElement('input');
-      hiddenPlusOneName.type = 'hidden';
-      hiddenPlusOneName.name = 'entry.1999140148';
-      hiddenPlusOneName.value = plusOne === 'Yes' ? plusOneName : '';
-      hiddenForm.appendChild(hiddenPlusOneName);
-
-      document.body.appendChild(hiddenForm);
-
+      const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfahKmju9lSlnkwJDH4IrNy1GYsANR9s6HXM1zddFlsL6Vs4A/formResponse';
       const formData = new URLSearchParams();
-      // Google Form fields — kept in the same order as the form questions.
       formData.append('entry.1789997178', name);
       formData.append('entry.978997940', plusOne);
-      formData.append('entry.1999140148', plusOne === 'Yes' ? plusOneName : '');
+      formData.append('entry.1999140148', plusOneName);
 
       fetch(formUrl, {
         method: 'POST',
@@ -716,17 +650,13 @@
       }).then(() => {
         rsvpEntries.push({
           name: name,
-          plus: plusOne === 'Yes' ? 1 : 0,
-          plusName: plusOne === 'Yes' ? plusOneName : ''
+          plus: plusOneName ? 1 : (plusOne ? 1 : 0),
+          plusName: plusOneName
         });
         renderRsvpList();
-
         document.getElementById('guestName').value = '';
         document.getElementById('plusOne').value = '';
-        document.getElementById('plusOneName').value = '';
-        document.getElementById('plusOneName').disabled = true;
-        document.getElementById('plusOneName').required = false;
-
+        document.getElementById('guestCount').value = '';
         alert(`✅ Thanks ${name}! Your RSVP was saved online. 🕷️`);
       }).catch(() => {
         alert('⚠️ We could not submit your RSVP. Please try again.');
@@ -779,6 +709,8 @@
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     });
+
+    // Plus-one name field is now a text field; no guest-count logic needed.
 
 
   })();
