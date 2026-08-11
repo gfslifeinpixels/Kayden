@@ -464,7 +464,7 @@
         <input type="text" id="guestName" placeholder="Your name (e.g. Miles)" required>
         <div class="row-duo">
           <input type="text" id="plusOne" placeholder="Plus one? (optional)">
-          <input type="number" id="guestCount" placeholder="total" min="1" value="1" style="width:70px;">
+          <input type="text" id="guestCount" placeholder="Plus one name" style="width:160px;">
         </div>
         <button id="rsvpSubmitBtn"><i class="fas fa-check-circle"></i> SAVE RSVP</button>
       </div>
@@ -617,7 +617,7 @@
         const plusSpan = document.createElement('span');
         plusSpan.className = 'badge-plus';
         const plusCount = entry.plus ? parseInt(entry.plus) : 0;
-        plusSpan.textContent = '+' + (plusCount > 0 ? plusCount : '0');
+        plusSpan.textContent = entry.plusName ? `+1 · ${entry.plusName}` : '+' + (plusCount > 0 ? plusCount : '0');
         li.appendChild(nameSpan);
         li.appendChild(plusSpan);
         ul.appendChild(li);
@@ -632,23 +632,35 @@
         alert('Please enter your name! (like Spidey)');
         return;
       }
-      let plusVal = document.getElementById('plusOne').value.trim();
-      let count = parseInt(document.getElementById('guestCount').value) || 1;
-      if (plusVal === '' && count > 1) {
-        plusVal = (count - 1).toString();
-      } else if (plusVal !== '') {
-        if (count > 1) plusVal = (count).toString();
-        else plusVal = '1';
-      } else {
-        plusVal = '0';
-      }
-      let plusNum = parseInt(plusVal) || 0;
-      rsvpEntries.push({ name: name, plus: plusNum.toString() });
-      renderRsvpList();
-      document.getElementById('guestName').value = '';
-      document.getElementById('plusOne').value = '';
-      document.getElementById('guestCount').value = '1';
-      alert(`✅ Thanks ${name}! You're on the guest list. 🕷️`);
+
+      const plusOne = document.getElementById('plusOne').value.trim();
+      const plusOneName = document.getElementById('guestCount').value.trim();
+
+      // Google Forms submission
+      const formUrl = 'https://docs.google.com/forms/d/13rLkObpt1JzQ6fy_pA8y4xzn8ukQLl5pVarn_5npsUY/formResponse';
+      const formData = new URLSearchParams();
+      formData.append('entry.1789997178', name);
+      formData.append('entry.978997940_sentinel', plusOne);
+      formData.append('entry.1999140148_sentinel', plusOneName);
+
+      fetch(formUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: formData
+      }).then(() => {
+        rsvpEntries.push({
+          name: name,
+          plus: plusOneName ? 1 : (plusOne ? 1 : 0),
+          plusName: plusOneName
+        });
+        renderRsvpList();
+        document.getElementById('guestName').value = '';
+        document.getElementById('plusOne').value = '';
+        document.getElementById('guestCount').value = '';
+        alert(`✅ Thanks ${name}! Your RSVP was saved online. 🕷️`);
+      }).catch(() => {
+        alert('⚠️ We could not submit your RSVP. Please try again.');
+      });
     });
 
     // ---- Password toggle (password = 1234, no hint) ----
@@ -698,16 +710,8 @@
       URL.revokeObjectURL(url);
     });
 
-    // plusOne hint
-    document.getElementById('guestCount').addEventListener('change', function() {
-      const val = parseInt(this.value) || 1;
-      const plusInput = document.getElementById('plusOne');
-      if (val > 1 && !plusInput.value) {
-        plusInput.placeholder = `+${val-1} guest(s)`;
-      } else {
-        plusInput.placeholder = 'Plus one? (optional)';
-      }
-    });
+    // Plus-one name field is now a text field; no guest-count logic needed.
+
 
   })();
 </script>
