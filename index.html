@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title>Kayden Elija · Spidey Invite</title>
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     * {
@@ -217,28 +216,40 @@
     .party-details {
       background: white;
       border-radius: 30px;
-      padding: 16px 16px 12px;
+      padding: 18px 20px 16px;
       box-shadow: 0 6px 0 #b0b0b0, 0 8px 16px rgba(0,0,0,0.1);
       border: 2px solid #b71c1c;
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .party-detail-row {
+      display: flex;
       align-items: center;
-      gap: 8px 12px;
-    }
-
-    .party-details i {
-      color: #b71c1c;
-      width: 24px;
-      font-size: 1.3rem;
-    }
-
-    .party-details span {
-      font-weight: 600;
-      color: #1d2c3a;
+      gap: 12px;
       font-size: 1rem;
     }
 
-    .party-details .highlight {
+    .party-detail-row i {
+      color: #b71c1c;
+      width: 24px;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+
+    .party-detail-row .label {
+      font-weight: 600;
+      color: #1d2c3a;
+      min-width: 65px;
+    }
+
+    .party-detail-row .value {
+      font-weight: 500;
+      color: #2a3a4a;
+    }
+
+    .party-detail-row .highlight {
       background: #fdd835;
       padding: 2px 14px;
       border-radius: 40px;
@@ -283,13 +294,56 @@
       font-weight: 500;
     }
 
-    .rsvp-form .row-duo {
+    .rsvp-form .plus-one-group {
       display: flex;
-      gap: 10px;
+      align-items: center;
+      gap: 12px;
+      background: white;
+      padding: 6px 16px 6px 12px;
+      border-radius: 60px;
+      border: 2px solid #b71c1c;
+      margin-bottom: 10px;
     }
 
-    .rsvp-form .row-duo input {
+    .rsvp-form .plus-one-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin: 0;
+      accent-color: #b71c1c;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .rsvp-form .plus-one-group label {
+      font-weight: 600;
+      color: #1d2c3a;
+      font-size: 0.95rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .rsvp-form .plus-one-group input[type="text"] {
       flex: 1;
+      padding: 8px 12px;
+      border: 2px solid #ddd;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      background: #f8f8f8;
+      margin-bottom: 0;
+      min-width: 80px;
+      transition: border 0.2s, background 0.2s;
+    }
+
+    .rsvp-form .plus-one-group input[type="text"]:disabled {
+      background: #eaeaea;
+      border-color: #ccc;
+      color: #888;
+      cursor: not-allowed;
+    }
+
+    .rsvp-form .plus-one-group input[type="text"]:enabled {
+      background: white;
+      border-color: #b71c1c;
     }
 
     .rsvp-form button {
@@ -386,6 +440,7 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.05);
       display: flex;
       justify-content: space-between;
+      align-items: center;
       font-size: 0.95rem;
     }
 
@@ -396,6 +451,15 @@
       font-size: 0.7rem;
       font-weight: 700;
       color: #1f1f1f;
+    }
+
+    .plus-name-tag {
+      font-size: 0.75rem;
+      color: #555;
+      background: #f0f0f0;
+      padding: 0 10px;
+      border-radius: 20px;
+      margin-left: 6px;
     }
 
     .download-btn {
@@ -414,6 +478,10 @@
     @media (max-width: 450px) {
       .envelope-icon { font-size: 80px; }
       .countdown-timer { font-size: 1.8rem; }
+      .party-detail-row { font-size: 0.9rem; flex-wrap: wrap; }
+      .party-detail-row .label { min-width: 55px; }
+      .rsvp-form .plus-one-group { flex-wrap: wrap; padding: 8px 14px; }
+      .rsvp-form .plus-one-group input[type="text"] { min-width: 100px; }
     }
   </style>
 </head>
@@ -447,12 +515,28 @@
       <div class="countdown-label"><i class="fas fa-clock"></i> NOV 15, 2026 · 3PM</div>
     </div>
 
-    <!-- party details -->
+    <!-- PARTY DETAILS with proper spacing -->
     <div class="party-details">
-      <i class="fas fa-map-marker-alt"></i><span>Ilocos, Philippines</span>
-      <i class="fas fa-calendar-day"></i><span class="highlight">Nov 15 · 3pm</span>
-      <i class="fas fa-birthday-cake"></i><span>Spider-Man theme!</span>
-      <i class="fas fa-child"></i><span>Kids friendly</span>
+      <div class="party-detail-row">
+        <i class="fas fa-map-pin"></i>
+        <span class="label">Where:</span>
+        <span class="value">Ilocos, Philippines</span>
+      </div>
+      <div class="party-detail-row">
+        <i class="fas fa-calendar-day"></i>
+        <span class="label">When:</span>
+        <span class="value highlight">Nov 15, 2026 · 3:00 PM</span>
+      </div>
+      <div class="party-detail-row">
+        <i class="fas fa-mask"></i>
+        <span class="label">Theme:</span>
+        <span class="value">Spider-Man theme!</span>
+      </div>
+      <div class="party-detail-row">
+        <i class="fas fa-child"></i>
+        <span class="label">For:</span>
+        <span class="value">Kids friendly</span>
+      </div>
     </div>
 
     <!-- RSVP FORM -->
@@ -462,10 +546,14 @@
       </div>
       <div class="rsvp-form" id="rsvpForm">
         <input type="text" id="guestName" placeholder="Your name (e.g. Miles)" required>
-        <div class="row-duo">
-          <input type="text" id="plusOne" placeholder="Plus one? (optional)">
-          <input type="number" id="guestCount" placeholder="total" min="1" value="1" style="width:70px;">
+
+        <!-- Plus One: checkbox + name field -->
+        <div class="plus-one-group">
+          <input type="checkbox" id="plusOneCheck">
+          <label for="plusOneCheck"><i class="fas fa-user-plus"></i> Plus One</label>
+          <input type="text" id="plusOneName" placeholder="Guest name" disabled>
         </div>
+
         <button id="rsvpSubmitBtn"><i class="fas fa-check-circle"></i> SAVE RSVP</button>
       </div>
       <div style="font-size:0.8rem; text-align:center; color:#1f3a4b; margin-top:6px;"><i class="fas fa-save"></i> saved online · download below</div>
@@ -516,7 +604,6 @@
       const centerY = height * 0.45;
       const maxRadius = Math.min(width, height) * 0.6;
       
-      // radial lines (spokes)
       const spokes = 12;
       for (let i = 0; i < spokes; i++) {
         const angle = (i / spokes) * Math.PI * 2 + Math.PI / 6;
@@ -530,7 +617,6 @@
         ctx.stroke();
       }
 
-      // concentric circles with slight distortion (web)
       const rings = 7;
       for (let r = 1; r <= rings; r++) {
         const radius = (r / rings) * maxRadius * 0.9;
@@ -551,7 +637,6 @@
         ctx.stroke();
       }
 
-      // small spider silhouette in corner
       ctx.fillStyle = 'rgba(30, 30, 30, 0.15)';
       ctx.beginPath();
       const sx = width * 0.85, sy = height * 0.15;
@@ -600,11 +685,24 @@
     }
     updateCountdown();
 
+    // ---- Plus One checkbox toggle ----
+    const plusOneCheck = document.getElementById('plusOneCheck');
+    const plusOneName = document.getElementById('plusOneName');
+
+    plusOneCheck.addEventListener('change', function() {
+      plusOneName.disabled = !this.checked;
+      if (!this.checked) {
+        plusOneName.value = '';
+      } else {
+        plusOneName.focus();
+      }
+    });
+
     // ---- RSVP data ----
     let rsvpEntries = [
-      { name: 'Kayden Elija', plus: '1' },
-      { name: 'Miles Morales', plus: '0' },
-      { name: 'Gwen Stacy', plus: '1' }
+      { name: 'Kayden Elija', plus: '1', plusName: 'MJ' },
+      { name: 'Miles Morales', plus: '0', plusName: '' },
+      { name: 'Gwen Stacy', plus: '1', plusName: 'Peter' }
     ];
 
     function renderRsvpList() {
@@ -612,14 +710,18 @@
       ul.innerHTML = '';
       rsvpEntries.forEach(entry => {
         const li = document.createElement('li');
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = entry.name || 'Guest';
-        const plusSpan = document.createElement('span');
-        plusSpan.className = 'badge-plus';
+        const leftSpan = document.createElement('span');
+        leftSpan.textContent = entry.name || 'Guest';
+        const rightSpan = document.createElement('span');
         const plusCount = entry.plus ? parseInt(entry.plus) : 0;
-        plusSpan.textContent = '+' + (plusCount > 0 ? plusCount : '0');
-        li.appendChild(nameSpan);
-        li.appendChild(plusSpan);
+        let badgeText = '+' + (plusCount > 0 ? plusCount : '0');
+        if (plusCount > 0 && entry.plusName) {
+          badgeText += ' (' + entry.plusName + ')';
+        }
+        rightSpan.className = 'badge-plus';
+        rightSpan.textContent = badgeText;
+        li.appendChild(leftSpan);
+        li.appendChild(rightSpan);
         ul.appendChild(li);
       });
     }
@@ -632,22 +734,32 @@
         alert('Please enter your name! (like Spidey)');
         return;
       }
-      let plusVal = document.getElementById('plusOne').value.trim();
-      let count = parseInt(document.getElementById('guestCount').value) || 1;
-      if (plusVal === '' && count > 1) {
-        plusVal = (count - 1).toString();
-      } else if (plusVal !== '') {
-        if (count > 1) plusVal = (count).toString();
-        else plusVal = '1';
-      } else {
-        plusVal = '0';
+
+      const hasPlus = plusOneCheck.checked;
+      let plusVal = '0';
+      let plusNameVal = '';
+
+      if (hasPlus) {
+        plusNameVal = plusOneName.value.trim();
+        if (!plusNameVal) {
+          alert('Please enter the name of your plus one!');
+          return;
+        }
+        plusVal = '1';
       }
-      let plusNum = parseInt(plusVal) || 0;
-      rsvpEntries.push({ name: name, plus: plusNum.toString() });
+
+      rsvpEntries.push({ 
+        name: name, 
+        plus: plusVal, 
+        plusName: plusNameVal 
+      });
       renderRsvpList();
+
       document.getElementById('guestName').value = '';
-      document.getElementById('plusOne').value = '';
-      document.getElementById('guestCount').value = '1';
+      plusOneCheck.checked = false;
+      plusOneName.value = '';
+      plusOneName.disabled = true;
+
       alert(`✅ Thanks ${name}! You're on the guest list. 🕷️`);
     });
 
@@ -684,7 +796,15 @@
       content += '=========================\n';
       rsvpEntries.forEach((entry, idx) => {
         const plus = entry.plus ? parseInt(entry.plus) : 0;
-        content += `${idx+1}. ${entry.name}  ( +${plus} )\n`;
+        let line = `${idx+1}. ${entry.name}`;
+        if (plus > 0) {
+          line += `  ( +1`;
+          if (entry.plusName) line += `: ${entry.plusName}`;
+          line += ` )`;
+        } else {
+          line += `  ( +0 )`;
+        }
+        content += line + '\n';
       });
       content += '\n--- Ilocos, PH · Nov 15, 2026 ---';
       const blob = new Blob([content], { type: 'text/plain' });
@@ -696,17 +816,6 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    });
-
-    // plusOne hint
-    document.getElementById('guestCount').addEventListener('change', function() {
-      const val = parseInt(this.value) || 1;
-      const plusInput = document.getElementById('plusOne');
-      if (val > 1 && !plusInput.value) {
-        plusInput.placeholder = `+${val-1} guest(s)`;
-      } else {
-        plusInput.placeholder = 'Plus one? (optional)';
-      }
     });
 
   })();
